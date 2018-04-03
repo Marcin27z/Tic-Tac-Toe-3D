@@ -1,6 +1,8 @@
 package main.java;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,7 +14,6 @@ class Server extends Thread {
     ClientHandler clientHandler;
     private ServerSocket serverSocket;
     private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
-    private HandshakeListener toAdd;
 
     Server(int port) {
         try {
@@ -29,7 +30,6 @@ class Server extends Thread {
                 socket.setKeepAlive(true);
                 clientHandler = new ClientHandler(socket);
                 clientHandler.start();
-                clientHandler.addHandshakeListener(toAdd);
                 for (NetworkEventListener networkEventListener : networkEventListeners) {
                     networkEventListener.clientConnected();
                 }
@@ -37,18 +37,6 @@ class Server extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-/*    MessageWaiter getMessageWaiter() {
-        return clientHandler.getMessageWaiter();
-    }
-
-    MessagePoster getMessagePoster() {
-        return clientHandler.getMessagePoster();
-    }*/
-
-    void addClientHandlerHandshakeListener(HandshakeListener toAdd) {
-        this.toAdd = toAdd;
     }
 
     public void addNetworkEventListener(NetworkEventListener toAdd) {
@@ -59,82 +47,43 @@ class Server extends Thread {
 class ClientHandler extends Thread {
 
     private Socket clientSocket;
-/*    private BufferedReader in;
-    private DataOutputStream out;*/
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private MessagePoster messagePoster;
+    //private MessagePoster messagePoster;
     private MessageWaiter messageWaiter;
-
-    private List<HandshakeListener> hlisteners = new ArrayList<>();
 
     ClientHandler(Socket socket) {
         clientSocket = socket;
-    }
-
-    public void run() {
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-
-            messagePoster = new MessagePoster(out, clientSocket);
-
-
-            /*messagePoster.start();
-            messageWaiter.start();*/
+            //messagePoster = new MessagePoster(out, clientSocket);
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            messageWaiter = new MessageWaiter(in, clientSocket);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    MessagePoster startMessagePoster() {
+    void send(Model model) {
+        try {
+            out.writeObject(model);
+            out.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*MessagePoster startMessagePoster() {
         messagePoster.start();
         return messagePoster;
-    }
+    }*/
 
     MessageWaiter startMessageWaiter() {
         messageWaiter.start();
         return messageWaiter;
     }
 
-/*    MessageWaiter getMessageWaiter() {
-        while(messageWaiter == null) {
-            try {
-                sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return messageWaiter;
-    }
-
-    MessagePoster getMessagePoster() {
-        while(messagePoster == null) {
-            try {
-                sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return messagePoster;
-    }*/
-
-    void addHandshakeListener(HandshakeListener toAdd) {hlisteners.add(toAdd);}
-
     Model waitForHandshake() {
-        /*try {
-            Model secondPlayersName = (Model) in.readObject();
-            hlisteners.get(0).getResponse().player[1].setName(secondPlayersName.player[1].getName());
-            out.writeObject(hlisteners.get(0).getResponse());
-            out.reset();
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        }*/
-        try {
-            in = new ObjectInputStream(clientSocket.getInputStream());
-            messageWaiter = new MessageWaiter(in, clientSocket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         System.out.println("in");
         Model inModel = null;
         try {
@@ -162,10 +111,4 @@ interface NetworkEventListener {
     void clientConnected();
 
     void establishedConnection();
-}
-
-interface HandshakeListener {
-    void gotHandshakeRequest(Model model);
-
-    Model getResponse();
 }

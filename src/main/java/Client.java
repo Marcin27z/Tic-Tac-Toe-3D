@@ -8,16 +8,13 @@ import java.util.List;
 
 class Client extends Thread {
     private Socket socket;
-/*    private BufferedReader in;
-    private DataOutputStream out;*/
     private InetAddress address;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private int port;
-    private MessagePoster messagePoster;
+    //private MessagePoster messagePoster;
     private MessageWaiter messageWaiter;
     private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
-    private List<HandshakeListener> handshakeListeners = new ArrayList<>();
+    private int port;
 
     Client(InetAddress address, int port) {
         this.address = address;
@@ -31,21 +28,8 @@ class Client extends Thread {
             socket.setKeepAlive(true);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            /*out.writeObject(handshakeListeners.get(0).getResponse());
-            out.reset();
-            Model model = null;
-            try {
-                model = (Model) in.readObject();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            handshakeListeners.get(0).getResponse().player[0].setName(model.player[0].getName());
-            handshakeListeners.get(0).getResponse().setTurn(model.getTurn());*/
-            messagePoster = new MessagePoster(out, socket);
+            //messagePoster = new MessagePoster(out, socket);
             messageWaiter = new MessageWaiter(in, socket);
-            /*messagePoster.start();
-            messageWaiter.start();*/
-
             for (NetworkEventListener networkEventListener : networkEventListeners)
                 networkEventListener.establishedConnection();
         } catch (IOException e) {
@@ -53,26 +37,14 @@ class Client extends Thread {
         }
     }
 
-    public void addHandshakeListener(HandshakeListener toAdd) {
-        handshakeListeners.add(toAdd);
-    }
-
     public void addNetworkEventListener(NetworkEventListener toAdd) {
         networkEventListeners.add(toAdd);
     }
 
-    MessageWaiter getMessageWaiter() {
-        return messageWaiter;
-    }
-
-    MessagePoster getMessagePoster() {
-        return messagePoster;
-    }
-
-    MessagePoster startMessagePoster() {
+   /* MessagePoster startMessagePoster() {
         messagePoster.start();
         return messagePoster;
-    }
+    }*/
 
     MessageWaiter startMessageWaiter() {
         messageWaiter.start();
@@ -96,5 +68,14 @@ class Client extends Thread {
             e.printStackTrace();
         }
         return model;
+    }
+
+    void send(Model model) {
+        try {
+            out.writeObject(model);
+            out.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

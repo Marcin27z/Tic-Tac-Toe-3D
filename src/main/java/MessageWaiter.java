@@ -8,10 +8,9 @@ import java.util.List;
 
 class MessageWaiter extends Thread {
 
-    //private BufferedReader in;
     private ObjectInputStream in;
     private Socket socket;
-    private List<NetworkEventListener> listeners = new ArrayList<>();
+    private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
 
     MessageWaiter(ObjectInputStream in, Socket socket) {
         this.in = in;
@@ -22,8 +21,8 @@ class MessageWaiter extends Thread {
         while (true) {
             try {
                 Model inMessage = (Model) in.readObject();
-                for (NetworkEventListener hl : listeners)
-                    hl.newMessageArrived(inMessage);
+                for (NetworkEventListener networkEventListener : networkEventListeners)
+                    networkEventListener.newMessageArrived(inMessage);
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -31,6 +30,6 @@ class MessageWaiter extends Thread {
     }
 
     public void addNetworkEventListener(NetworkEventListener toAdd) {
-        listeners.add(toAdd);
+        networkEventListeners.add(toAdd);
     }
 }

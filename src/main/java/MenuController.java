@@ -1,5 +1,6 @@
 package main.java;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -26,40 +27,62 @@ public class MenuController extends SlaveController{
     @FXML
     TextField serverHostPort;
 
-
-    public void startLocal() {
-        model.setPlayersNames(localPlayerOne.getText(), localPlayerTwo.getText());
-        startGame(Model.LOCAL);
-        menuStage.close();
-    }
-
-    public void join() {
-        model.player[1].setName(localOnlineGamePlayer.getText());
-        model.me = 1;
-        startGame(Model.ONLINE);
-        try {
-            masterController.joinServer(InetAddress.getByName(serverAddress.getText()), Integer.parseInt(serverJoinPort.getText()));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+    @FXML
+    void startLocal() {
+        if(!localPlayerOne.getText().equals("") && !localPlayerTwo.getText().equals("")) {
+            model.setPlayersNames(localPlayerOne.getText(), localPlayerTwo.getText());
+            startGame(Model.LOCAL);
+            closeMenu();
+        } else {
+            System.out.println("You need to enter both names");
+            //show error window
         }
     }
 
-    public void host() {
-        model.player[0].setName(localOnlineGamePlayer.getText());
-        model.me = 0;
-        startGame(Model.ONLINE);
-        Random random = new Random();
-        if(random.nextBoolean() == true)
-            model.changeTurn();
-        masterController.startServer(Integer.parseInt(serverHostPort.getText()));
+    @FXML
+    void join() {
+        if (!localOnlineGamePlayer.getText().equals("")) {
+            model.player[1].setName(localOnlineGamePlayer.getText());
+            model.me = 1;
+            startGame(Model.ONLINE);
+            try {
+                masterController.joinServer(InetAddress.getByName(serverAddress.getText()), Integer.parseInt(serverJoinPort.getText()));
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("You need to enter name");
+            //show error window
+        }
     }
 
-    public void closeMenu() {
+    @FXML
+    void host() {
+        if (!localOnlineGamePlayer.getText().equals("")) {
+            model.player[0].setName(localOnlineGamePlayer.getText());
+            model.me = 0;
+            startGame(Model.ONLINE);
+            Random random = new Random();
+            if(random.nextBoolean() == true)
+                model.changeTurn();
+            masterController.startServer(Integer.parseInt(serverHostPort.getText()));
+        } else {
+            System.out.println("You need to enter name");
+            //show error window
+        }
+    }
+
+    void closeMenu() {
         menuStage.close();
     }
 
     void initModel(Model model) {
         this.model = model;
+    }
+
+    @FXML
+    void onEnter(ActionEvent actionEvent) {
+        startLocal();
     }
 
     void initStage(Stage menuStage) {

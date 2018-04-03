@@ -8,7 +8,6 @@ import java.util.concurrent.BlockingQueue;
 
 class MessagePoster extends Thread {
 
-    //private DataOutputStream out;
     private ObjectOutputStream out;
     private Socket socket;
     BlockingQueue<Model> queue = new ArrayBlockingQueue<>(10);
