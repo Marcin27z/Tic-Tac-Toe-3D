@@ -37,8 +37,12 @@ class OnlineController extends SlaveController implements NetworkEventListener, 
 
     @Override
     public void establishedConnection() {
-        messageWaiter = client.getMessageWaiter();
-        messagePoster = client.getMessagePoster();
+        client.initHandshake(model);
+        Model inModel = client.waitForResponse();
+        model.player[0].setName(inModel.player[0].getName());
+        model.setTurn(inModel.getTurn());
+        messagePoster = client.startMessagePoster();
+        messageWaiter = client.startMessageWaiter();
        /* try {
             messagePoster.queue.put("");
         } catch (InterruptedException e) {
@@ -52,8 +56,11 @@ class OnlineController extends SlaveController implements NetworkEventListener, 
 
     @Override
     public void clientConnected() {
-        messagePoster = server.getMessagePoster();
-        messageWaiter = server.getMessageWaiter();
+        Model inModel = server.clientHandler.waitForHandshake();
+        model.player[1].setName(inModel.player[1].getName());
+        server.clientHandler.responseToHandshake(model);
+        messagePoster = server.clientHandler.startMessagePoster();
+        messageWaiter = server.clientHandler.startMessageWaiter();
         messageWaiter.addNetworkEventListener(this);
         Platform.runLater(() -> {
             masterController.closeMenu();
@@ -62,7 +69,6 @@ class OnlineController extends SlaveController implements NetworkEventListener, 
 
     @Override
     public void newMessageArrived(Model inMessage) {
-        //System.out.println(inMessage.player[0].getName() + " " + inMessage.player[1].getName());
         model.player = inMessage.player;
         masterController.updateBoard(inMessage.y, inMessage.f);
         model.changeTurn();

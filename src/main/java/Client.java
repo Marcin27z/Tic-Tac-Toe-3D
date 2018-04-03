@@ -27,23 +27,12 @@ class Client extends Thread {
     @Override
     public void run() {
         try {
-
             socket = new Socket(address, port);
-
             socket.setKeepAlive(true);
-            /*in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new DataOutputStream(socket.getOutputStream());*/
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-
-
-            /*out.writeBytes("Password\n");//init handshake/send password
-            String response = in.readLine();*/
-            //while(networkEventListeners.size() == 0);
-            /*networkEventListeners.get(0).newMessageArrived(response);*/
-            out.writeObject(handshakeListeners.get(0).getResponse());
+            /*out.writeObject(handshakeListeners.get(0).getResponse());
             out.reset();
-            //out.writeObject(handshakeListeners.get(0).getResponse().getTurn());
             Model model = null;
             try {
                 model = (Model) in.readObject();
@@ -51,7 +40,7 @@ class Client extends Thread {
                 e.printStackTrace();
             }
             handshakeListeners.get(0).getResponse().player[0].setName(model.player[0].getName());
-            handshakeListeners.get(0).getResponse().setTurn(model.getTurn());
+            handshakeListeners.get(0).getResponse().setTurn(model.getTurn());*/
             messagePoster = new MessagePoster(out, socket);
             messageWaiter = new MessageWaiter(in, socket);
             /*messagePoster.start();
@@ -88,5 +77,24 @@ class Client extends Thread {
     MessageWaiter startMessageWaiter() {
         messageWaiter.start();
         return messageWaiter;
+    }
+
+    void initHandshake(Model model) {
+        try {
+            out.writeObject(model);
+            out.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    Model waitForResponse() {
+        Model model = null;
+        try {
+            model = (Model) in.readObject();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+        return model;
     }
 }

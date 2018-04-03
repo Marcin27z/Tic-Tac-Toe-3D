@@ -32,7 +32,6 @@ class MessagePoster extends Thread {
 
     void send(Model model) {
         try {
-            System.out.println(model.player[0].getName() + " " + model.player[1].getName());
             out.writeObject(model);
             out.reset();
         } catch (IOException e) {

@@ -21,9 +21,7 @@ class MessageWaiter extends Thread {
     public void run() {
         while (true) {
             try {
-                //String inMessage = in.readLine();
                 Model inMessage = (Model) in.readObject();
-                System.out.println(inMessage.player[0].getName() + "," + inMessage.player[1].getName());
                 for (NetworkEventListener hl : listeners)
                     hl.newMessageArrived(inMessage);
             } catch (IOException | ClassNotFoundException e) {

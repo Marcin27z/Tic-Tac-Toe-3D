@@ -39,13 +39,13 @@ class Server extends Thread {
         }
     }
 
-    MessageWaiter getMessageWaiter() {
+/*    MessageWaiter getMessageWaiter() {
         return clientHandler.getMessageWaiter();
     }
 
     MessagePoster getMessagePoster() {
         return clientHandler.getMessagePoster();
-    }
+    }*/
 
     void addClientHandlerHandshakeListener(HandshakeListener toAdd) {
         this.toAdd = toAdd;
@@ -74,28 +74,11 @@ class ClientHandler extends Thread {
 
     public void run() {
         try {
-            /*in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new DataOutputStream(clientSocket.getOutputStream());*/
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-            in = new ObjectInputStream(clientSocket.getInputStream());
-            messagePoster = new MessagePoster(out, clientSocket);
-            messageWaiter = new MessageWaiter(in, clientSocket);
 
-           /* String password = in.readLine(); //wait for handshake/password
-            if(!password.equals("Password")) Platform.runLater(() -> System.out.println("Not match"));
-            for (HandshakeListener hl : networkEventListeners)
-                hl.gotHandshakeRequest(password);
-            out.writeBytes("Correct" + networkEventListeners.get(0).getResponse() + "\n");*/
-            try {
-                Model secondPlayersName = (Model) in.readObject();
-                //System.out.println(hlisteners.get(0).getResponse().player[0].getName() + " " + secondPlayersName.player[1].getName());
-                hlisteners.get(0).getResponse().player[1].setName(secondPlayersName.player[1].getName());
-                //hlisteners.get(0).gotHandshakeRequest(turn, secondPlayersName);
-                out.writeObject(hlisteners.get(0).getResponse());
-                out.reset();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            messagePoster = new MessagePoster(out, clientSocket);
+
+
             /*messagePoster.start();
             messageWaiter.start();*/
         } catch (IOException e) {
@@ -113,7 +96,7 @@ class ClientHandler extends Thread {
         return messageWaiter;
     }
 
-    MessageWaiter getMessageWaiter() {
+/*    MessageWaiter getMessageWaiter() {
         while(messageWaiter == null) {
             try {
                 sleep(100);
@@ -133,9 +116,43 @@ class ClientHandler extends Thread {
             }
         }
         return messagePoster;
-    }
+    }*/
 
     void addHandshakeListener(HandshakeListener toAdd) {hlisteners.add(toAdd);}
+
+    Model waitForHandshake() {
+        /*try {
+            Model secondPlayersName = (Model) in.readObject();
+            hlisteners.get(0).getResponse().player[1].setName(secondPlayersName.player[1].getName());
+            out.writeObject(hlisteners.get(0).getResponse());
+            out.reset();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }*/
+        try {
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            messageWaiter = new MessageWaiter(in, clientSocket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("in");
+        Model inModel = null;
+        try {
+            inModel = (Model) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return inModel;
+    }
+
+    void responseToHandshake(Model model) {
+        try {
+            out.writeObject(model);
+            out.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 interface NetworkEventListener {
