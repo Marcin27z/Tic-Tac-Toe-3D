@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="888.0" prefWidth="988.0" style="-fx-background-color: #2B2B2B;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.Controller">
+   <top>
+      <MenuBar fx:id="menuBar" prefWidth="988.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu fx:id="fileMenu" mnemonicParsing="false" styleClass="menu" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newGame" text="New game" />
+              <MenuItem fx:id="closeItem" mnemonicParsing="false" onAction="#close" text="Close" />
+            </items>
+          </Menu>
+          <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem fx:id="aboutItem" mnemonicParsing="false" onAction="#about" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <right>
+      <Pane prefHeight="200.0" prefWidth="180.0" style="-fx-background-color: #3C4242;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="52.0" layoutY="41.0" text="Turn" textFill="#e4dfdf">
+               <font>
+                  <Font size="38.0" />
+               </font>
+            </Label>
+            <Label fx:id="turnLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="109.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#e4dfdf">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children></Pane>
+   </right>
+</BorderPane>
