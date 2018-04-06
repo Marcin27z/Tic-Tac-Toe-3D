@@ -11,7 +11,6 @@ class Client extends Thread {
     private InetAddress address;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    //private MessagePoster messagePoster;
     private MessageWaiter messageWaiter;
     private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
     private int port;
@@ -28,7 +27,6 @@ class Client extends Thread {
             socket.setKeepAlive(true);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            //messagePoster = new MessagePoster(out, socket);
             messageWaiter = new MessageWaiter(in, socket);
             for (NetworkEventListener networkEventListener : networkEventListeners)
                 networkEventListener.establishedConnection();
@@ -40,11 +38,6 @@ class Client extends Thread {
     public void addNetworkEventListener(NetworkEventListener toAdd) {
         networkEventListeners.add(toAdd);
     }
-
-   /* MessagePoster startMessagePoster() {
-        messagePoster.start();
-        return messagePoster;
-    }*/
 
     MessageWaiter startMessageWaiter() {
         messageWaiter.start();

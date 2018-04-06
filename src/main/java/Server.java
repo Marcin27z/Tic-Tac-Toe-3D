@@ -49,14 +49,12 @@ class ClientHandler extends Thread {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    //private MessagePoster messagePoster;
     private MessageWaiter messageWaiter;
 
     ClientHandler(Socket socket) {
         clientSocket = socket;
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-            //messagePoster = new MessagePoster(out, clientSocket);
             in = new ObjectInputStream(clientSocket.getInputStream());
             messageWaiter = new MessageWaiter(in, clientSocket);
         } catch (IOException e) {
@@ -72,11 +70,6 @@ class ClientHandler extends Thread {
             e.printStackTrace();
         }
     }
-
-    /*MessagePoster startMessagePoster() {
-        messagePoster.start();
-        return messagePoster;
-    }*/
 
     MessageWaiter startMessageWaiter() {
         messageWaiter.start();

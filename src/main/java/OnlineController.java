@@ -9,7 +9,6 @@ class OnlineController extends SlaveController implements NetworkEventListener {
     private Server server;
     private Client client;
     private MessageWaiter messageWaiter;
-    //private MessagePoster messagePoster;
 
     void initModel(Model model) {
         this.model = model;
@@ -38,7 +37,6 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         Model inModel = client.waitForResponse();
         model.player[0].setName(inModel.player[0].getName());
         model.setTurn(inModel.getTurn());
-        //messagePoster = client.startMessagePoster();
         messageWaiter = client.startMessageWaiter();
         messageWaiter.addNetworkEventListener(this);
         Platform.runLater(() -> {
@@ -51,7 +49,6 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         Model inModel = server.clientHandler.waitForHandshake();
         model.player[1].setName(inModel.player[1].getName());
         server.clientHandler.responseToHandshake(model);
-        //messagePoster = server.clientHandler.startMessagePoster();
         messageWaiter = server.clientHandler.startMessageWaiter();
         messageWaiter.addNetworkEventListener(this);
         Platform.runLater(() -> {
@@ -63,8 +60,10 @@ class OnlineController extends SlaveController implements NetworkEventListener {
     public void newMessageArrived(Model inMessage) {
         model.player = inMessage.player;
         masterController.updateBoard(inMessage.y, inMessage.f);
-        model.changeTurn();
-        masterController.updateTurnLabel();
+        if(!model.player[model.getCurrentPlayer()].checkWin()) {
+            model.changeTurn();
+            masterController.updateTurnLabel();
+        }
     }
 
 }
