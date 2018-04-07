@@ -9,12 +9,12 @@ import javafx.scene.shape.Sphere;
 
 
 class Field extends Box {
-    private PhongMaterial material;
-    private Color basicColor = new Color(0.1,0.5,1,0.5);
-    private Color hoverColor = new Color(0.1, 0.3, 1, 0.5);
+    private final PhongMaterial material;
+    private final Color basicColor = new Color(0.1,0.5,1,0.5);
+    private final Color hoverColor = new Color(0.1, 0.3, 1, 0.5);
     private Sphere sphere;
     private Box cube;
-    Group field;
+    final Group field;
     Field(double x, double y, double z) {
         super(128, 1, 128);
         field = new Group(this);
@@ -76,7 +76,7 @@ class Field extends Box {
         cube = new Box(40, 40, 40);
         PhongMaterial cubeMaterial = new PhongMaterial();
         cubeMaterial.setDiffuseColor(Color.RED);
-        cube.setMaterial(cubeMaterial);;
+        cube.setMaterial(cubeMaterial);
         cube.setTranslateX(getTranslateX());
         cube.setTranslateY(getTranslateY() - 25);
         cube.setTranslateZ(getTranslateZ());

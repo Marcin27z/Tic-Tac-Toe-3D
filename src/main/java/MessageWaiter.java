@@ -8,9 +8,9 @@ import java.util.List;
 
 class MessageWaiter extends Thread {
 
-    private ObjectInputStream in;
-    private Socket socket;
-    private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
+    private final ObjectInputStream in;
+    private final Socket socket;
+    private final List<NetworkEventListener> networkEventListeners = new ArrayList<>();
 
     MessageWaiter(ObjectInputStream in, Socket socket) {
         this.in = in;

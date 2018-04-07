@@ -59,8 +59,14 @@
                   <Line endX="280.0" endY="250.0" startX="280.0" startY="130.0" />
                   <Button layoutX="390.0" layoutY="225.0" mnemonicParsing="false" onAction="#host" prefHeight="25.0" prefWidth="80.0" text="Host" />
                   <Label layoutX="289.0" layoutY="149.0" text="Server port:" />
+                  <Label fx:id="errorLabel" layoutX="30.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="17.0" prefWidth="300.0" textFill="#e33434" />
                </children></AnchorPane>
       </content>
     </Tab>
+      <Tab text="About">
+          <content>
+              <fx:include fx:id="aboutView" source="about.fxml" />
+          </content>
+      </Tab>
   </tabs>
 </TabPane>

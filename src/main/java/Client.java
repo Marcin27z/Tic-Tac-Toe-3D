@@ -8,12 +8,12 @@ import java.util.List;
 
 class Client extends Thread {
     private Socket socket;
-    private InetAddress address;
+    private final InetAddress address;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private MessageWaiter messageWaiter;
-    private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
-    private int port;
+    private final List<NetworkEventListener> networkEventListeners = new ArrayList<>();
+    private final int port;
 
     Client(InetAddress address, int port) {
         this.address = address;
@@ -67,6 +67,14 @@ class Client extends Thread {
         try {
             out.writeObject(model);
             out.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void disconnect() {
+        try {
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

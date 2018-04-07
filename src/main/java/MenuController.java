@@ -2,6 +2,7 @@ package main.java;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -26,6 +27,8 @@ public class MenuController extends SlaveController{
     TextField serverJoinPort;
     @FXML
     TextField serverHostPort;
+    @FXML
+    Label errorLabel;
 
     @FXML
     void startLocal() {
@@ -43,16 +46,17 @@ public class MenuController extends SlaveController{
     void join() {
         if (!localOnlineGamePlayer.getText().equals("")) {
             model.player[1].setName(localOnlineGamePlayer.getText());
+            setErrorLabel("");
             model.me = 1;
             startGame(Model.ONLINE);
+            masterController.setNickNameLabel(localOnlineGamePlayer.getText());
             try {
                 masterController.joinServer(InetAddress.getByName(serverAddress.getText()), Integer.parseInt(serverJoinPort.getText()));
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("You need to enter name");
-            //show error window
+            setErrorLabel("You need to enter name!");
         }
     }
 
@@ -60,15 +64,16 @@ public class MenuController extends SlaveController{
     void host() {
         if (!localOnlineGamePlayer.getText().equals("")) {
             model.player[0].setName(localOnlineGamePlayer.getText());
+            setErrorLabel("");
             model.me = 0;
             startGame(Model.ONLINE);
             Random random = new Random();
-            if(random.nextBoolean() == true)
+            if(random.nextBoolean())
                 model.changeTurn();
+            masterController.setNickNameLabel(localOnlineGamePlayer.getText());
             masterController.startServer(Integer.parseInt(serverHostPort.getText()));
         } else {
-            System.out.println("You need to enter name");
-            //show error window
+            setErrorLabel("You need to enter name!");
         }
     }
 
@@ -92,6 +97,9 @@ public class MenuController extends SlaveController{
     private void startGame(boolean mode) {
         model.setMode(mode);
         model.restart();
-        masterController.resetGameView();
+    }
+
+    private void setErrorLabel(String errorText) {
+        errorLabel.setText(errorText);
     }
 }

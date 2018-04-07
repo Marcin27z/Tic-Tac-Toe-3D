@@ -39,6 +39,11 @@
                   <Font size="24.0" />
                </font>
             </Label>
+            <Label fx:id="nickNameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="16.0" layoutY="21.0" prefHeight="27.0" prefWidth="149.0" text=" " textAlignment="CENTER">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
          </children></Pane>
    </right>
 </BorderPane>

@@ -3,8 +3,8 @@ package main.java;
 import javafx.scene.Group;
 
 class Board {
-    Field[] field;
-    Group board;
+    final Field[] field;
+    final Group board;
     Board (int y) {
         field = new Field[16];
         board = new Group();

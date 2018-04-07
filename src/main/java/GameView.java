@@ -11,15 +11,15 @@ import javafx.scene.transform.Translate;
 
 class GameView extends Group {
 
-    private PerspectiveCamera camera;
-    private PointLight light;
-    Board[] boards;
-    private Group root3d;
-    private SubScene scene3d;
-    private BorderPane pane;
+    private final PerspectiveCamera camera;
+    private final PointLight light;
+    final Board[] boards;
+    private final Group root3d;
+    private final SubScene scene3d;
+    private final BorderPane pane;
 
-    private Rotate rotateX;
-    private Rotate rotateY;
+    private final Rotate rotateX;
+    private final Rotate rotateY;
     private double mouseOldX, mouseOldY, mousePosX, mousePosY;
     final private double defRotateX = 0, defRotateY = 0, defCameraZ = 0;
 

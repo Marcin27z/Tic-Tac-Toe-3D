@@ -4,9 +4,9 @@ import java.net.InetAddress;
 
 class MasterController {
 
-    private GameController gameController;
-    private Controller controller;
-    private OnlineController onlineController;
+    private final GameController gameController;
+    private final Controller controller;
+    private final OnlineController onlineController;
 
     MasterController(GameController gameController, Controller controller, Model model) {
         //this.menuController = menuController;
@@ -19,6 +19,10 @@ class MasterController {
 
     void updateTurnLabel() {
         controller.updateTurnLabel();
+    }
+
+    void setNickNameLabel(String nickName) {
+        controller.setNickNameLabel(nickName);
     }
 
     void resetGameView() {

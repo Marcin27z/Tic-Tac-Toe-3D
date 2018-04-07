@@ -15,10 +15,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 
-public class Controller extends SlaveController{
+public class Controller extends SlaveController {
 
     Model model;
-    Stage primaryStage;
+    private Stage primaryStage;
     private MenuController menuController;
 
     @FXML
@@ -33,9 +33,15 @@ public class Controller extends SlaveController{
     MenuItem aboutItem;
     @FXML
     Label turnLabel;
+    @FXML
+    Label nickNameLabel;
 
     public void updateTurnLabel() {
         Platform.runLater(() ->turnLabel.setText(model.player[model.getCurrentPlayer()].getName()));
+    }
+
+    public void setNickNameLabel(String nickName) {
+        nickNameLabel.setText(nickName);
     }
 
     public void close() {
@@ -87,7 +93,7 @@ public class Controller extends SlaveController{
                 System.exit(0);
         });
         menu.showAndWait();
-        updateTurnLabel();
+        if(model.getTurn() != 5) updateTurnLabel();
     }
 
     void closeMenu() {

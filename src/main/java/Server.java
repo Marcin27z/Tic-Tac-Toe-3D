@@ -11,12 +11,14 @@ import java.util.List;
 class Server extends Thread {
 
     private Socket socket;
-    ClientHandler clientHandler;
+    private ClientHandler clientHandler;
     private ServerSocket serverSocket;
-    private List<NetworkEventListener> networkEventListeners = new ArrayList<>();
+    private final List<NetworkEventListener> networkEventListeners = new ArrayList<>();
+    private int port;
 
     Server(int port) {
         try {
+            this.port = port;
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,14 +41,22 @@ class Server extends Thread {
         }
     }
 
-    public void addNetworkEventListener(NetworkEventListener toAdd) {
+    void addNetworkEventListener(NetworkEventListener toAdd) {
         networkEventListeners.add(toAdd);
+    }
+
+    ClientHandler getClientHandler() {
+        return clientHandler;
+    }
+
+    int getPort() {
+        return port;
     }
 }
 
 class ClientHandler extends Thread {
 
-    private Socket clientSocket;
+    private final Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private MessageWaiter messageWaiter;
@@ -91,6 +101,14 @@ class ClientHandler extends Thread {
         try {
             out.writeObject(model);
             out.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void disconnect() {
+        try {
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

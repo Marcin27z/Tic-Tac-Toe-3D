@@ -2,11 +2,14 @@ package main.java;
 
 import javafx.application.Platform;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 class OnlineController extends SlaveController implements NetworkEventListener {
 
     private Model model;
     private Server server;
+    private final ArrayList<Server> servers = new ArrayList<>();
+    private ClientHandler clientHandler;
     private Client client;
     private MessageWaiter messageWaiter;
 
@@ -21,13 +24,25 @@ class OnlineController extends SlaveController implements NetworkEventListener {
     }
 
     void startServer(int port) {
-        server = new Server(port);
-        server.start();
-        server.addNetworkEventListener(this);
+        boolean found = false;
+        if(server != null) {
+            for(Server s : servers) {
+                if(s.getPort() == port) {
+                    server = s;
+                    found = true;
+                }
+            }
+        }
+        if(!found){
+            server = new Server(port);
+            servers.add(server);
+            server.start();
+            server.addNetworkEventListener(this);
+        }
     }
 
     void sendPlayerStatus() {
-        if(model.me == 0) server.clientHandler.send(model);
+        if(model.me == 0) clientHandler.send(model);
         else client.send(model);
     }
 
@@ -39,21 +54,18 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         model.setTurn(inModel.getTurn());
         messageWaiter = client.startMessageWaiter();
         messageWaiter.addNetworkEventListener(this);
-        Platform.runLater(() -> {
-            masterController.closeMenu();
-        });
+        startGame();
     }
 
     @Override
     public void clientConnected() {
-        Model inModel = server.clientHandler.waitForHandshake();
+        clientHandler = server.getClientHandler();
+        Model inModel = clientHandler.waitForHandshake();
         model.player[1].setName(inModel.player[1].getName());
-        server.clientHandler.responseToHandshake(model);
-        messageWaiter = server.clientHandler.startMessageWaiter();
+        clientHandler.responseToHandshake(model);
+        messageWaiter = clientHandler.startMessageWaiter();
         messageWaiter.addNetworkEventListener(this);
-        Platform.runLater(() -> {
-            masterController.closeMenu();
-        });
+        startGame();
     }
 
     @Override
@@ -64,6 +76,13 @@ class OnlineController extends SlaveController implements NetworkEventListener {
             model.changeTurn();
             masterController.updateTurnLabel();
         }
+    }
+
+    private void startGame() {
+        Platform.runLater(() -> {
+            masterController.resetGameView();
+            masterController.closeMenu();
+        });
     }
 
 }

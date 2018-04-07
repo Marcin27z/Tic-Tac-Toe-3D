@@ -5,10 +5,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
 
-class GameController extends SlaveController{
+class GameController extends SlaveController {
 
-    private GameView view;
-    private Model model;
+    private final GameView view;
+    private final Model model;
 
     GameController(GameView gameView, Model model) {
         this.model = model;
@@ -35,21 +35,13 @@ class GameController extends SlaveController{
                                 makeBoardMove(finalField, model.getCurrentPlayer());
                                 if (model.getMode() == Model.ONLINE)
                                     masterController.sendPlayerStatus();
-                                if (!checkWin()) {
+                                if (!localCheckWin()) {
                                     model.changeTurn();
                                     masterController.updateTurnLabel();
                                 } else {
                                     model.setTurn(5);
                                 }
                             }
-                        /*if (model.getTurn() == 0) {
-                            result = finalField.addSphere();
-                        } else if (model.getTurn() == 1) {
-                            result = finalField.addCube();
-                        }
-                        if (result) {
-                            makeMove(finalI, finalJ);
-                        }*/
                         }
                         event.consume();
                     }
@@ -58,13 +50,20 @@ class GameController extends SlaveController{
         }
     }
 
-    private boolean checkWin() {
+    private boolean localCheckWin() {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
             System.out.println("Win");
-            Platform.runLater(() -> showWinAlert(model.player[model.getCurrentPlayer()].getName()));
+            showWinAlert(model.player[model.getCurrentPlayer()].getName());
             return true;
         }
         return false;
+    }
+
+    private void checkWin() {
+        if (model.player[model.getCurrentPlayer()].checkWin()) {
+            System.out.println("Win");
+            Platform.runLater(() -> showWinAlert(model.player[model.getCurrentPlayer()].getName()));
+        }
     }
 
     private void makeBoardMove(Field field, int player) {
@@ -78,18 +77,7 @@ class GameController extends SlaveController{
             Platform.runLater(() -> view.boards[i].field[j].addCube());
         else
             Platform.runLater(() -> view.boards[i].field[j].addSphere());
-        if(!checkWin()) {
-            masterController.updateTurnLabel();
-        }
-    }
-
-    void makeMove(int i, int j) {
-        model.player[model.getCurrentPlayer()].makeMove(i, j);
-        if (model.getMode() == Model.ONLINE)
-            masterController.sendPlayerStatus();
         checkWin();
-        model.changeTurn();
-        masterController.updateTurnLabel();
     }
 
     private void showWinAlert(String name) {
