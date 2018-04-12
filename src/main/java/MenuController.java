@@ -35,6 +35,7 @@ public class MenuController extends SlaveController{
         if(!localPlayerOne.getText().equals("") && !localPlayerTwo.getText().equals("")) {
             model.setPlayersNames(localPlayerOne.getText(), localPlayerTwo.getText());
             startGame(Model.LOCAL);
+            masterController.resetGameView();
             closeMenu();
         } else {
             System.out.println("You need to enter both names");

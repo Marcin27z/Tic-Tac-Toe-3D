@@ -13,7 +13,7 @@ class Field extends Box {
     private final Color basicColor = new Color(0.1,0.5,1,0.5);
     private final Color hoverColor = new Color(0.1, 0.3, 1, 0.5);
     private Sphere sphere;
-    private Box cube;
+    private Cross cube;
     final Group field;
     Field(double x, double y, double z) {
         super(128, 1, 128);
@@ -73,7 +73,8 @@ class Field extends Box {
     boolean addCube() {
         if(cube != null || sphere != null)
             return false;
-        cube = new Box(40, 40, 40);
+       // cube = new Box(40, 40, 40);
+        cube = new Cross(50);
         PhongMaterial cubeMaterial = new PhongMaterial();
         cubeMaterial.setDiffuseColor(Color.RED);
         cube.setMaterial(cubeMaterial);
