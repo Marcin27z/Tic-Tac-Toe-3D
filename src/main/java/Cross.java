@@ -7,7 +7,7 @@ import javafx.scene.transform.Rotate;
 
 class Cross extends Group {
 
-    Box[] arms;
+    private Box[] arms;
 
     Cross(double diameter) {
         arms = new Box[3];

@@ -120,21 +120,11 @@ class Model implements Serializable {
         }
         return false;
     }
-
-    void assign(Model other) {
-        mode = other.mode;
-        turn = other.turn;
-        player = other.player;
-    }
 }
 
 class Player implements Serializable {
     private boolean[][] board;
     private String name;
-
-    Player() {
-        board = new boolean[4][16];
-    }
 
     Player(String name) {
         this.name = name;
@@ -197,10 +187,5 @@ class Player implements Serializable {
 
     public void clearField (int y, int f) {
         board[y][f] = false;
-    }
-
-    void set(Player other) {
-        board = other.board;
-        name = other.name;
     }
 }

@@ -18,7 +18,7 @@ class GameController extends SlaveController {
             for (int j = 0; j < 16; j++) {
                 int finalI = i;
                 int finalJ = j;
-                Field finalField = view.boards[i].field[j];
+                Field finalField = view.boards[i].getField(j);
 
                 finalField.setOnMouseEntered(event -> {
                     finalField.setHovered();
@@ -51,7 +51,6 @@ class GameController extends SlaveController {
 
     private boolean localCheckWin() {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
-            System.out.println("Win2");
             String winner = model.player[model.getCurrentPlayer()].getName();
             model.setEndGame();
             if(model.getMode() == Model.ONLINE)
@@ -64,7 +63,6 @@ class GameController extends SlaveController {
 
     private void checkWin() {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
-            System.out.println("Win1");
             String winner = model.player[model.getCurrentPlayer()].getName();
             Platform.runLater(() -> showWinAlert(winner));
         }
@@ -78,24 +76,22 @@ class GameController extends SlaveController {
     void updateBoard(int i, int j) {
         //model.player[model.getCurrentPlayer()].makeMove(i, j);
         if (model.getIdentity() == Model.SERVER)
-            Platform.runLater(() -> view.boards[i].field[j].addCross());
+            Platform.runLater(() -> view.boards[i].getField(j).addCross());
         else
-            Platform.runLater(() -> view.boards[i].field[j].addSphere());
+            Platform.runLater(() -> view.boards[i].getField(j).addSphere());
         checkWin();
     }
 
     private void showWinAlert(String name) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("");
         alert.setHeaderText(null);
         alert.setTitle("");
         alert.setContentText(name + " won!!!");
         alert.initStyle(StageStyle.UTILITY);
-        alert.showAndWait().ifPresent(response -> {
-            while (response != ButtonType.OK) {
-
+        alert.showAndWait().ifPresent(result -> {
+            if(result == ButtonType.OK) {
+                masterController.invokeMenu();
             }
-            masterController.invokeMenu();
         });
     }
 

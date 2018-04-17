@@ -10,8 +10,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.Optional;
-
 public class Main extends Application {
 
     private Model model;
@@ -59,10 +57,11 @@ public class Main extends Application {
         ButtonType exitButtonType = new ButtonType("Exit");
         ButtonType cancelButtonType = new ButtonType("Cancel");
         alert.getButtonTypes().setAll(exitButtonType, cancelButtonType);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == exitButtonType){
-            System.exit(0);
-        }
+        alert.showAndWait().ifPresent(result -> {
+            if (result == exitButtonType){
+                System.exit(0);
+            }
+        });
     }
 
     public static void main(String[] args) {

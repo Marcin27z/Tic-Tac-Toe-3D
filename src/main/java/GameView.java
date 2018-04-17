@@ -42,7 +42,8 @@ class GameView extends Group {
         pane = new BorderPane();
         setTranslateX(20);
         setTranslateY(40);
-        root3d = new Group(boards[0].board, boards[1].board, boards[2].board, boards[3].board);
+        root3d = new Group(boards);
+        //root3d = new Group(boards[0].board, boards[1].board, boards[2].board, boards[3].board);
         root3d.getTransforms().addAll (rotateX, rotateY, new Translate(0, 0, 0));
         scene3d = new SubScene(new Group(light, root3d),768,768, true, SceneAntialiasing.BALANCED );
         scene3d.setCamera(camera);
@@ -97,9 +98,7 @@ class GameView extends Group {
     void reset() {
         resetView();
         for(Board b : boards) {
-            for(Field f: b.field) {
-                f.clearField();
-            }
+            b.clear();
         }
     }
 }

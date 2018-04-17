@@ -9,7 +9,6 @@ class MasterController {
     private final OnlineController onlineController;
 
     MasterController(GameController gameController, Controller controller, Model model) {
-        //this.menuController = menuController;
         this.gameController = gameController;
         this.controller = controller;
         onlineController = new OnlineController();
@@ -50,7 +49,7 @@ class MasterController {
         gameController.updateBoard(i , j);
     }
 
-    public void invokeMenu() {
+    void invokeMenu() {
         controller.invokeMenu(false);
     }
 

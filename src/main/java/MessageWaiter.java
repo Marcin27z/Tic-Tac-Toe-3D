@@ -1,7 +1,7 @@
 package main.java;
 
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
@@ -31,6 +31,11 @@ class MessageWaiter extends Thread {
                 Model inMessage = (Model) in.readObject();
                 for (NetworkEventListener networkEventListener : networkEventListeners)
                     networkEventListener.newMessageArrived(inMessage);
+            } catch (EOFException e) {
+                //
+            } catch (SocketException e) {
+                for (NetworkEventListener networkEventListener : networkEventListeners)
+                    networkEventListener.endDisconnected();
             } catch (SocketTimeoutException e) {
                 //
             } catch (IOException | ClassNotFoundException e) {

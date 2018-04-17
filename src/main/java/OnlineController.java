@@ -142,4 +142,9 @@ class OnlineController extends SlaveController implements NetworkEventListener {
             }
         }
     }
+
+    @Override
+    public void endDisconnected() {
+        disconnect();
+    }
 }

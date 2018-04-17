@@ -19,6 +19,7 @@ class Server extends Thread {
         this.serverSocket = serverSocket;
     }
 
+    @Override
     public void run() {
         try {
             socket = serverSocket.accept();
@@ -83,7 +84,6 @@ class ClientHandler extends Thread {
     }
 
     Model waitForHandshake() {
-        System.out.println("in");
         Model inModel = null;
         try {
             inModel = (Model) in.readObject();
@@ -119,4 +119,6 @@ interface NetworkEventListener {
     void clientConnected();
 
     void establishedConnection();
+
+    void endDisconnected();
 }
