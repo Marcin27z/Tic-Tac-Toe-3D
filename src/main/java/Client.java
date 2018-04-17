@@ -8,22 +8,18 @@ import java.util.List;
 
 class Client extends Thread {
     private Socket socket;
-    private final InetAddress address;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private MessageWaiter messageWaiter;
     private final List<NetworkEventListener> networkEventListeners = new ArrayList<>();
-    private final int port;
 
-    Client(InetAddress address, int port) {
-        this.address = address;
-        this.port = port;
+    Client(Socket socket) {
+        this.socket = socket;
     }
 
     @Override
     public void run() {
         try {
-            socket = new Socket(address, port);
             socket.setKeepAlive(true);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
@@ -75,7 +71,8 @@ class Client extends Thread {
     void disconnect() {
         try {
             socket.close();
-        } catch (IOException e) {
+            messageWaiter.join();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

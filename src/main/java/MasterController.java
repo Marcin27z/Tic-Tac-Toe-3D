@@ -53,4 +53,8 @@ class MasterController {
     public void invokeMenu() {
         controller.invokeMenu(false);
     }
+
+    void disconnect() {
+        onlineController.disconnect();
+    }
 }

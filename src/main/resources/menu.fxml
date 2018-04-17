@@ -40,6 +40,7 @@
                         <Font size="18.0" />
                      </font>
                   </Button>
+                  <Label fx:id="localErrorLabel" layoutX="40.0" layoutY="174.0" prefHeight="17.0" prefWidth="421.0" textFill="#e33434" />
                </children></AnchorPane>
       </content>
     </Tab>
@@ -59,7 +60,7 @@
                   <Line endX="280.0" endY="250.0" startX="280.0" startY="130.0" />
                   <Button layoutX="390.0" layoutY="225.0" mnemonicParsing="false" onAction="#host" prefHeight="25.0" prefWidth="80.0" text="Host" />
                   <Label layoutX="289.0" layoutY="149.0" text="Server port:" />
-                  <Label fx:id="errorLabel" layoutX="30.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="17.0" prefWidth="300.0" textFill="#e33434" />
+                  <Label fx:id="onlineErrorLabel" layoutX="30.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="17.0" prefWidth="300.0" textFill="#e33434" />
                </children></AnchorPane>
       </content>
     </Tab>

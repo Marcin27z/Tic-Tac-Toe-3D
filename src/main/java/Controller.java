@@ -58,7 +58,7 @@ public class Controller extends SlaveController {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(primaryStage);
         Parent root = FXMLLoader.load(getClass().getResource("../resources/about.fxml"));
-        Scene dialogScene = new Scene(root, 400, 300);
+        Scene dialogScene = new Scene(root, 500, 270);
         dialog.setScene(dialogScene);
         dialog.show();
     }

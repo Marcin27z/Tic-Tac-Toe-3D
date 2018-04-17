@@ -28,18 +28,22 @@ public class MenuController extends SlaveController{
     @FXML
     TextField serverHostPort;
     @FXML
-    Label errorLabel;
+    Label onlineErrorLabel;
+    @FXML
+    Label localErrorLabel;
 
     @FXML
     void startLocal() {
         if(!localPlayerOne.getText().equals("") && !localPlayerTwo.getText().equals("")) {
             model.setPlayersNames(localPlayerOne.getText(), localPlayerTwo.getText());
+            setLocalErrorLabel("");
             startGame(Model.LOCAL);
             masterController.resetGameView();
+            masterController.setNickNameLabel("");
+            masterController.disconnect();
             closeMenu();
         } else {
-            System.out.println("You need to enter both names");
-            //show error window
+            setLocalErrorLabel("You need to enter both names!");
         }
     }
 
@@ -47,8 +51,8 @@ public class MenuController extends SlaveController{
     void join() {
         if (!localOnlineGamePlayer.getText().equals("")) {
             model.player[1].setName(localOnlineGamePlayer.getText());
-            setErrorLabel("");
-            model.me = 1;
+            setOnlineErrorLabel("");
+            model.setIdentity(Model.CLIENT);
             startGame(Model.ONLINE);
             masterController.setNickNameLabel(localOnlineGamePlayer.getText());
             try {
@@ -57,7 +61,7 @@ public class MenuController extends SlaveController{
                 e.printStackTrace();
             }
         } else {
-            setErrorLabel("You need to enter name!");
+            setOnlineErrorLabel("You need to enter name!");
         }
     }
 
@@ -65,8 +69,8 @@ public class MenuController extends SlaveController{
     void host() {
         if (!localOnlineGamePlayer.getText().equals("")) {
             model.player[0].setName(localOnlineGamePlayer.getText());
-            setErrorLabel("");
-            model.me = 0;
+            setOnlineErrorLabel("");
+            model.setIdentity(Model.SERVER);
             startGame(Model.ONLINE);
             Random random = new Random();
             if(random.nextBoolean())
@@ -74,7 +78,7 @@ public class MenuController extends SlaveController{
             masterController.setNickNameLabel(localOnlineGamePlayer.getText());
             masterController.startServer(Integer.parseInt(serverHostPort.getText()));
         } else {
-            setErrorLabel("You need to enter name!");
+            setOnlineErrorLabel("You need to enter name!");
         }
     }
 
@@ -100,7 +104,11 @@ public class MenuController extends SlaveController{
         model.restart();
     }
 
-    private void setErrorLabel(String errorText) {
-        errorLabel.setText(errorText);
+    private void setOnlineErrorLabel(String errorText) {
+        onlineErrorLabel.setText(errorText);
+    }
+
+    private void setLocalErrorLabel(String errorText) {
+        localErrorLabel.setText(errorText);
     }
 }

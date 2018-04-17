@@ -14,27 +14,19 @@ class Server extends Thread {
     private ClientHandler clientHandler;
     private ServerSocket serverSocket;
     private final List<NetworkEventListener> networkEventListeners = new ArrayList<>();
-    private int port;
 
-    Server(int port) {
-        try {
-            this.port = port;
-            serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    Server(ServerSocket serverSocket) {
+        this.serverSocket = serverSocket;
     }
 
     public void run() {
         try {
-            while (true) {
-                socket = serverSocket.accept();
-                socket.setKeepAlive(true);
-                clientHandler = new ClientHandler(socket);
-                clientHandler.start();
-                for (NetworkEventListener networkEventListener : networkEventListeners) {
-                    networkEventListener.clientConnected();
-                }
+            socket = serverSocket.accept();
+            socket.setKeepAlive(true);
+            clientHandler = new ClientHandler(socket);
+            clientHandler.start();
+            for (NetworkEventListener networkEventListener : networkEventListeners) {
+                networkEventListener.clientConnected();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,8 +41,12 @@ class Server extends Thread {
         return clientHandler;
     }
 
-    int getPort() {
-        return port;
+    void joinClientHandler() {
+        try {
+            clientHandler.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
@@ -109,7 +105,8 @@ class ClientHandler extends Thread {
     void disconnect() {
         try {
             clientSocket.close();
-        } catch (IOException e) {
+            messageWaiter.join();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

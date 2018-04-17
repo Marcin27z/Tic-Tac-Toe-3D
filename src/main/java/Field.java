@@ -12,12 +12,13 @@ class Field extends Box {
     private final PhongMaterial material;
     private final Color basicColor = new Color(0.1,0.5,1,0.5);
     private final Color hoverColor = new Color(0.1, 0.3, 1, 0.5);
-    private Sphere sphere;
-    private Cross cube;
+    Sphere sphere;
+    Cross cross;// = new Cross(0);
     final Group field;
     Field(double x, double y, double z) {
         super(128, 1, 128);
-        field = new Group(this);
+        //sphere = new Sphere(50);
+        field = new Group( this);
         setTranslateX(x);
         setTranslateY(y);
         setTranslateZ(z);
@@ -56,11 +57,11 @@ class Field extends Box {
     }
 
     boolean addSphere() {
-        if(cube != null || sphere != null)
+        if (cross != null || sphere != null)
             return false;
         sphere = new Sphere();
         PhongMaterial sphereMaterial = new PhongMaterial();
-        sphereMaterial.setDiffuseColor(Color.BLUE);
+        sphereMaterial.setDiffuseColor(new Color(0.0, 0.0, 1, 1));
         sphere.setMaterial(sphereMaterial);
         sphere.setRadius(25);
         sphere.setTranslateX(getTranslateX());
@@ -70,29 +71,30 @@ class Field extends Box {
         return true;
     }
 
-    boolean addCube() {
-        if(cube != null || sphere != null)
+    boolean addCross() {
+        if (cross != null || sphere != null)
             return false;
        // cube = new Box(40, 40, 40);
-        cube = new Cross(50);
+        cross = new Cross(50);
         PhongMaterial cubeMaterial = new PhongMaterial();
         cubeMaterial.setDiffuseColor(Color.RED);
-        cube.setMaterial(cubeMaterial);
-        cube.setTranslateX(getTranslateX());
-        cube.setTranslateY(getTranslateY() - 25);
-        cube.setTranslateZ(getTranslateZ());
-        Platform.runLater(() -> field.getChildren().add(cube));
+        cross.setMaterial(cubeMaterial);
+        cross.setTranslateX(getTranslateX());
+        cross.setTranslateY(getTranslateY() - 25);
+        cross.setTranslateZ(getTranslateZ());
+        Platform.runLater(() -> field.getChildren().add(cross));
         return true;
     }
 
     void clearField() {
-        field.getChildren().removeAll(cube, sphere); //?
-        cube = null; //?
+        field.getChildren().removeAll(cross, sphere); //?
+        cross = null; //?
         sphere = null; //?
     }
     void setHovered() {
         material.setDiffuseColor(hoverColor);
     }
+
     void setUnHovered() {
         material.setDiffuseColor(basicColor);
     }

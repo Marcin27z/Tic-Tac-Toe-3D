@@ -1,8 +1,11 @@
 package main.java;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +21,18 @@ class MessageWaiter extends Thread {
     }
 
     public void run() {
-        while (true) {
+        try {
+            socket.setSoTimeout(2000);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        while (!socket.isClosed()) {
             try {
                 Model inMessage = (Model) in.readObject();
                 for (NetworkEventListener networkEventListener : networkEventListeners)
                     networkEventListener.newMessageArrived(inMessage);
+            } catch (SocketTimeoutException e) {
+                //
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

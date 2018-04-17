@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
+import javafx.stage.StageStyle;
 
 class GameController extends SlaveController {
 
@@ -29,7 +30,7 @@ class GameController extends SlaveController {
                 });
                 finalField.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
-                        if (((model.getTurn() != 4 && model.me == 0) || (model.getTurn() != 3 && model.me == 1)) && model.getTurn() != 5) {
+                        if (((model.getTurn() != 4 && model.getIdentity() == Model.SERVER) || (model.getTurn() != 3 && model.getIdentity() == Model.CLIENT)) && model.getTurn() != 5) {
                             boolean result = model.makeMove(model.getCurrentPlayer(), finalI, finalJ);
                             if (result) {
                                 makeBoardMove(finalField, model.getCurrentPlayer());
@@ -38,8 +39,6 @@ class GameController extends SlaveController {
                                 if (!localCheckWin()) {
                                     model.changeTurn();
                                     masterController.updateTurnLabel();
-                                } else {
-                                    model.setTurn(5);
                                 }
                             }
                         }
@@ -52,8 +51,12 @@ class GameController extends SlaveController {
 
     private boolean localCheckWin() {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
-            System.out.println("Win");
-            showWinAlert(model.player[model.getCurrentPlayer()].getName());
+            System.out.println("Win2");
+            String winner = model.player[model.getCurrentPlayer()].getName();
+            model.setEndGame();
+            if(model.getMode() == Model.ONLINE)
+                masterController.disconnect();
+            showWinAlert(winner);
             return true;
         }
         return false;
@@ -61,20 +64,21 @@ class GameController extends SlaveController {
 
     private void checkWin() {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
-            System.out.println("Win");
-            Platform.runLater(() -> showWinAlert(model.player[model.getCurrentPlayer()].getName()));
+            System.out.println("Win1");
+            String winner = model.player[model.getCurrentPlayer()].getName();
+            Platform.runLater(() -> showWinAlert(winner));
         }
     }
 
     private void makeBoardMove(Field field, int player) {
-        if(player == 0) field.addSphere();
-        else field.addCube();
+        if (player == 0) field.addSphere();
+        else field.addCross();
     }
 
     void updateBoard(int i, int j) {
         //model.player[model.getCurrentPlayer()].makeMove(i, j);
-        if(model.me == 0)
-            Platform.runLater(() -> view.boards[i].field[j].addCube());
+        if (model.getIdentity() == Model.SERVER)
+            Platform.runLater(() -> view.boards[i].field[j].addCross());
         else
             Platform.runLater(() -> view.boards[i].field[j].addSphere());
         checkWin();
@@ -83,8 +87,10 @@ class GameController extends SlaveController {
     private void showWinAlert(String name) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("");
-        alert.setHeaderText(name + " won!!!");
+        alert.setHeaderText(null);
         alert.setTitle("");
+        alert.setContentText(name + " won!!!");
+        alert.initStyle(StageStyle.UTILITY);
         alert.showAndWait().ifPresent(response -> {
             while (response != ButtonType.OK) {
 

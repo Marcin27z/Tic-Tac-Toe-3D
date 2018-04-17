@@ -7,11 +7,14 @@ class Model implements Serializable {
     private boolean mode = false;
     final static boolean LOCAL = false;
     final static boolean ONLINE = true;
+    final static boolean SERVER = false;
+    final static boolean CLIENT = true;
     final private int localPlayerOne = 1;
     final private int localPlayerTwo = 2;
     final private int localPlayerTurn = 3;
     final private int remotePlayerTurn = 4;
-    int me, y, f;
+    private boolean me;
+    private int latestMoveY, latestMoveF;
     Player[] player;
 
     Model() {
@@ -43,6 +46,26 @@ class Model implements Serializable {
             turn = localPlayerTwo;
         else if (!mode && turn == localPlayerTwo)
             turn = localPlayerOne;
+    }
+
+    void setIdentity(boolean identity) {
+        me = identity;
+    }
+
+    boolean getIdentity() {
+        return me;
+    }
+
+    int getLatestMoveY() {
+        return latestMoveY;
+    }
+
+    int getLatestMoveF() {
+        return latestMoveF;
+    }
+
+    void setEndGame() {
+        turn = 5;
     }
 
     void setTurn(int turn) {
@@ -91,8 +114,8 @@ class Model implements Serializable {
 
     boolean makeMove(int playerNr, int y, int f) {
         if(!player[1 - playerNr].checkField(y, f) && player[playerNr].makeMove(y, f)) {
-            this.y = y;
-            this.f =f;
+            latestMoveY = y;
+            latestMoveF = f;
             return true;
         }
         return false;
