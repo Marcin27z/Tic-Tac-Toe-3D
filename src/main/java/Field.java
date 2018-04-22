@@ -7,7 +7,9 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Sphere;
 
-
+/**
+ * Basic class that creates the gameView
+ */
 class Field extends Group {
 
     private final PhongMaterial material;
@@ -28,6 +30,10 @@ class Field extends Group {
         getChildren().add(field);
     }
 
+    /**
+     * Adds sphere on the field
+     * @return status of the operation
+     */
     boolean addSphere() {
         if (cross != null || sphere != null)
             return false;
@@ -43,6 +49,10 @@ class Field extends Group {
         return true;
     }
 
+    /**
+     * Adds cross on the field
+     * @return status of the operation
+     */
     boolean addCross() {
         if (cross != null || sphere != null)
             return false;
@@ -57,15 +67,26 @@ class Field extends Group {
         return true;
     }
 
+    /**
+     * Deletes sphere or cross from the field
+     */
     void clearField() {
         getChildren().removeAll(cross, sphere); //?
         cross = null; //?
         sphere = null; //?
     }
+
+    /**
+     * Sets color of the field when hovered
+     */
     void setHovered() {
         material.setDiffuseColor(hoverColor);
     }
 
+
+    /**
+     * Sets basic color when unhovered
+     */
     void setUnHovered() {
         material.setDiffuseColor(basicColor);
     }

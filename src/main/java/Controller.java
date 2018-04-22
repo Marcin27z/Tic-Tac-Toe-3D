@@ -14,7 +14,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-
+/**
+ * Controls view around the gameView
+ */
 public class Controller extends SlaveController {
 
     Model model;
@@ -36,25 +38,41 @@ public class Controller extends SlaveController {
     @FXML
     Label nickNameLabel;
 
+    /**
+     * Sets turnLabel to the current value from the model
+     */
     void updateTurnLabel() {
         Platform.runLater(() -> turnLabel.setText(model.player[model.getCurrentPlayer()].getName()));
     }
 
+    /**
+     * Sets nickname label to the given value
+     * @param nickName value to set
+     */
     void setNickNameLabel(String nickName) {
         nickNameLabel.setText(nickName);
     }
 
+    /**
+     * Closes the app
+     */
     @FXML
     void close() {
         //show confirmation
         System.exit(0);
     }
 
+    /**
+     * Invokes the menu in order to start new game
+     */
     @FXML
     void newGame() {
         invokeMenu(false);
     }
 
+    /**
+     * Opens about window with basic information about the program
+     */
     @FXML
     void about() {
         final Stage dialog = new Stage();
@@ -79,6 +97,10 @@ public class Controller extends SlaveController {
         primaryStage = stage;
     }
 
+    /**
+     * Invokes menu
+     * @param isCrucial if true closing menu closes application, otherwise closing menu has no effect
+     */
     void invokeMenu(boolean isCrucial) {
         Stage menu = new Stage();
         menu.initModality(Modality.APPLICATION_MODAL);

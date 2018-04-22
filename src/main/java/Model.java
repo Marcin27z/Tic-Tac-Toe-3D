@@ -3,6 +3,7 @@ package main.java;
 import java.io.Serializable;
 
 class Model implements Serializable {
+
     private int turn = 1;
     private boolean mode = false;
     final static boolean LOCAL = false;
@@ -24,20 +25,6 @@ class Model implements Serializable {
     }
 
     void changeTurn() {
-        /*switch (turn) {
-            case 0:
-                if (!mode)
-                    turn = 1;
-                else
-                    turn = 2;
-                break;
-            case 1:
-                turn = 0;
-                break;
-            case 2:
-                turn = 0;
-                break;
-        }*/
         if (mode && turn == remotePlayerTurn)
             turn = localPlayerTurn;
         else if (mode && turn == localPlayerTurn)
@@ -77,13 +64,11 @@ class Model implements Serializable {
     }
 
     int getCurrentPlayer() {
-        /*if(turn == 0)
-            return 0;
-        else
-            return 1;*/
         if (turn == remotePlayerTurn || turn == localPlayerTwo)
             return 1;
-        else return 0;
+        else
+            return 0;
+
     }
 
     void restart() {

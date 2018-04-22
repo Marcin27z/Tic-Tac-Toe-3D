@@ -11,9 +11,8 @@ class MasterController {
     MasterController(GameController gameController, Controller controller, Model model) {
         this.gameController = gameController;
         this.controller = controller;
-        onlineController = new OnlineController();
+        onlineController = new OnlineController(model);
         onlineController.initMasterController(this);
-        onlineController.initModel(model);
     }
 
     void updateTurnLabel() {

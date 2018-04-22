@@ -8,24 +8,44 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Hosts the game, listens on the socket for incoming connections and handles that connection
+ */
 class Server extends Thread {
 
     private Socket socket;
-    private ClientHandler clientHandler;
+    //private ClientHandler clientHandler;
     private ServerSocket serverSocket;
     private final List<NetworkEventListener> networkEventListeners = new ArrayList<>();
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private MessageWaiter messageWaiter;
 
+    /**
+     * Creates new Server with given ServerSocket for connection accepting
+     * @param serverSocket socket on which accept connections
+     */
     Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
+    /**
+     * Runs thread that listens for connection, creates input and output streams and notifies listeners that new client has connected
+     */
     @Override
     public void run() {
         try {
             socket = serverSocket.accept();
             socket.setKeepAlive(true);
-            clientHandler = new ClientHandler(socket);
-            clientHandler.start();
+            //clientHandler = new ClientHandler(socket);
+            //clientHandler.start();
+            try {
+                out = new ObjectOutputStream(socket.getOutputStream());
+                in = new ObjectInputStream(socket.getInputStream());
+                messageWaiter = new MessageWaiter(in, socket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             for (NetworkEventListener networkEventListener : networkEventListeners) {
                 networkEventListener.clientConnected();
             }
@@ -34,79 +54,70 @@ class Server extends Thread {
         }
     }
 
+    /**
+     * Adds NetworkEventListener
+     * @param toAdd NetworkEventListener to be added
+     */
     void addNetworkEventListener(NetworkEventListener toAdd) {
         networkEventListeners.add(toAdd);
     }
 
-    ClientHandler getClientHandler() {
-        return clientHandler;
-    }
-
-    void joinClientHandler() {
+    /**
+     * Sends given object through ObjectOutputStream
+     * @param object object to be sent
+     */
+    void send(Object object) {
         try {
-            clientHandler.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-class ClientHandler extends Thread {
-
-    private final Socket clientSocket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
-    private MessageWaiter messageWaiter;
-
-    ClientHandler(Socket socket) {
-        clientSocket = socket;
-        try {
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            in = new ObjectInputStream(clientSocket.getInputStream());
-            messageWaiter = new MessageWaiter(in, clientSocket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void send(Model model) {
-        try {
-            out.writeObject(model);
+            out.writeObject(object);
             out.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Starts messageWaiter thread and return it
+     * @return started messageWaiter thread
+     */
     MessageWaiter startMessageWaiter() {
         messageWaiter.start();
         return messageWaiter;
     }
 
-    Model waitForHandshake() {
-        Model inModel = null;
+    /**
+     * Waits for data structure containing clients nickname
+     * @return object containing clients nickname
+     */
+    Object waitForHandshake() {
+        Object inObject = null;
         try {
-            inModel = (Model) in.readObject();
+            inObject = in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return inModel;
+        return inObject;
     }
 
-    void responseToHandshake(Model model) {
+    /**
+     * Sends data structure that contains current game status with server and client nicknames
+     * @param object
+     */
+    void responseToHandshake(Object object) {
         try {
-            out.writeObject(model);
+            out.writeObject(object);
             out.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Closes socket
+     */
     void disconnect() {
         try {
-            clientSocket.close();
-            messageWaiter.join();
-        } catch (IOException | InterruptedException e) {
+            socket.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

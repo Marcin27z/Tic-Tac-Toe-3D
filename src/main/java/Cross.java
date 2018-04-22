@@ -5,6 +5,9 @@ import javafx.scene.paint.Material;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 
+/**
+ * Basic element of the view. Can be added to the field
+ */
 class Cross extends Group {
 
     private Box[] arms;
@@ -25,6 +28,10 @@ class Cross extends Group {
         //getTransforms().addAll(new Rotate(45, 0, 0 , 0, Rotate.Y_AXIS), new Rotate(45, 0, 0 , 0, Rotate.Z_AXIS));
     }
 
+    /**
+     * Sets material of the cross
+     * @param material material to set
+     */
     void setMaterial(Material material) {
         for(int i = 0; i < 3; ++i) {
             arms[i].setMaterial(material);

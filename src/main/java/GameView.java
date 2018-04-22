@@ -13,7 +13,7 @@ class GameView extends Group {
 
     private final PerspectiveCamera camera;
     private final PointLight light;
-    final Board[] boards;
+    private final Board[] boards;
     private final Group root3d;
     private final SubScene scene3d;
     private final BorderPane pane;
@@ -93,6 +93,10 @@ class GameView extends Group {
         rotateX.setAngle(defRotateX);
         rotateY.setAngle(defRotateY);
         camera.setTranslateZ(defCameraZ);
+    }
+
+    Board getBoard(int i) {
+        return boards[i];
     }
 
     void reset() {

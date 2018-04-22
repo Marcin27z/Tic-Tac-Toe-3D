@@ -7,20 +7,32 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * Controller that handles interactions between server or client threads and other controllers or model
+ */
 class OnlineController extends SlaveController implements NetworkEventListener {
 
     private Model model;
     private Server server;
     private final ArrayList<ServerSocket> serverSockets = new ArrayList<>();
-    private ClientHandler clientHandler;
+    //private ClientHandler clientHandler;
     private Client client;
     private MessageWaiter messageWaiter;
     private ServerSocket serverSocket;
 
-    void initModel(Model model) {
+    /**
+     * Creates controller
+     * @param model model to control
+     */
+    OnlineController(Model model) {
         this.model = model;
     }
 
+    /**
+     * Creates socket and starts Client thread with this socket
+     * @param address address for the socket to bind
+     * @param port port for the socket to bind
+     */
     void joinServer(InetAddress address, int port) {
         Socket socket = null;
         try {
@@ -33,15 +45,14 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         client.addNetworkEventListener(this);
     }
 
+    /**
+     * Stops running server, checks if there is already ServerSocket on given port and creates new if there isn't, starts server with this socket
+     * @param port port for listening for incoming connections
+     */
     void startServer(int port) {
         if (server != null) {
-            if (clientHandler != null) {
-                clientHandler.disconnect();
-            }
-            server.joinClientHandler();
             try {
                 server.join();
-                clientHandler = null;
                 server = null;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -69,13 +80,19 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         }
     }
 
+    /**
+     * Sends current game status
+     */
     void sendPlayerStatus() {
         if (model.getIdentity() == Model.SERVER)
-            clientHandler.send(model);
+            server.send(model);
         else
             client.send(model);
     }
 
+    /**
+     * Performs handshake on client side and starts the game
+     */
     @Override
     public void establishedConnection() {
         client.initHandshake(model);
@@ -87,17 +104,23 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         startGame();
     }
 
+    /**
+     * Performs handshake on server side and starts the game
+     */
     @Override
     public void clientConnected() {
-        clientHandler = server.getClientHandler();
-        Model inModel = clientHandler.waitForHandshake();
+        Model inModel = (Model) server.waitForHandshake();
         model.player[1].setName(inModel.player[1].getName());
-        clientHandler.responseToHandshake(model);
-        messageWaiter = clientHandler.startMessageWaiter();
+        server.responseToHandshake(model);
+        messageWaiter = server.startMessageWaiter();
         messageWaiter.addNetworkEventListener(this);
         startGame();
     }
 
+    /**
+     * Handles the incoming game status, board and turn
+     * @param inMessage
+     */
     @Override
     public void newMessageArrived(Model inMessage) {
         model.player = inMessage.player;
@@ -111,6 +134,9 @@ class OnlineController extends SlaveController implements NetworkEventListener {
 
     }
 
+    /**
+     * Resets gameView and closes menu
+     */
     private void startGame() {
         Platform.runLater(() -> {
             masterController.resetGameView();
@@ -118,27 +144,28 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         });
     }
 
+    /**
+     * Closes socket and joins all threads
+     */
     void disconnect() {
         if (model.getIdentity() == Model.CLIENT) {
             if(client != null) {
                 client.disconnect();
                 try {
                     client.join();
+                    client = null;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
-        else if (clientHandler != null) {
-            clientHandler.disconnect();
-            if (server != null) {
-                try {
-                    server.joinClientHandler();
-                    server.join();
-                    server = null;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        else if (server != null) {
+            server.disconnect();
+            try {
+                server.join();
+                server = null;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
