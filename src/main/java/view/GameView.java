@@ -1,4 +1,4 @@
-package main.java;
+package main.java.view;
 
 import javafx.geometry.Insets;
 import javafx.scene.*;
@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
-class GameView extends Group {
+public class GameView extends Group {
 
     private final PerspectiveCamera camera;
     private final PointLight light;
@@ -21,12 +21,12 @@ class GameView extends Group {
     private final Rotate rotateX;
     private final Rotate rotateY;
     private double mouseOldX, mouseOldY, mousePosX, mousePosY;
-    final private double defRotateX = 0, defRotateY = 0, defCameraZ = 0;
+    final private double DEF_ROTATE_X = 0, DEF_ROTATE_Y = 0, DEF_CAMERA_Z = 0;
 
-    GameView() {
+    public GameView() {
 
-        rotateX = new Rotate(defRotateX, 225, 250, 225 ,Rotate.X_AXIS);
-        rotateY = new Rotate(defRotateY, 225, 250, 255, Rotate.Y_AXIS);
+        rotateX = new Rotate(DEF_ROTATE_X, 225, 250, 225 ,Rotate.X_AXIS);
+        rotateY = new Rotate(DEF_ROTATE_Y, 225, 250, 255, Rotate.Y_AXIS);
         light = new PointLight();
         light.setTranslateX(-225);
         light.setTranslateY(-225);
@@ -34,7 +34,7 @@ class GameView extends Group {
         camera = new PerspectiveCamera(false);
         camera.setTranslateX(-150);
         camera.setTranslateY(-200);
-        camera.setTranslateZ(defCameraZ);
+        camera.setTranslateZ(DEF_CAMERA_Z);
         boards = new Board[4];
         for (int i = 0; i < 4; i++) {
             boards[i] = new Board(100 * (i + 1));
@@ -73,6 +73,20 @@ class GameView extends Group {
         });
         setOnScroll(event -> zoom(event.getDeltaY()));
 
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 16; j++) {
+                Field finalField = getBoard(i).getField(j);
+                finalField.setOnMouseEntered(event -> {
+                    finalField.setHovered();
+                    event.consume();
+                });
+                finalField.setOnMouseExited(event -> {
+                    finalField.setUnHovered();
+                    event.consume();
+                });
+            }
+        }
+
         Button resetButton = new Button("center");
         resetButton.setTranslateX(700);
         resetButton.setTranslateY(700);
@@ -90,16 +104,16 @@ class GameView extends Group {
     }
 
     private void resetView() {
-        rotateX.setAngle(defRotateX);
-        rotateY.setAngle(defRotateY);
-        camera.setTranslateZ(defCameraZ);
+        rotateX.setAngle(DEF_ROTATE_X);
+        rotateY.setAngle(DEF_ROTATE_Y);
+        camera.setTranslateZ(DEF_CAMERA_Z);
     }
 
-    Board getBoard(int i) {
+    public Board getBoard(int i) {
         return boards[i];
     }
 
-    void reset() {
+    public void reset() {
         resetView();
         for(Board b : boards) {
             b.clear();

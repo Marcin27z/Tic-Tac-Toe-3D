@@ -9,6 +9,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import main.java.controller.GameController;
+import main.java.controller.MasterController;
+import main.java.model.Model;
+import main.java.view.Controller;
+import main.java.view.GameView;
 
 public class Main extends Application {
 
@@ -28,7 +33,7 @@ public class Main extends Application {
         controller.initStage(primaryStage);
         Group view = new Group(root);
 
-        GameController gameController = new GameController(gameView, model);
+        GameController gameController = new GameController(gameView, model, primaryStage);
 
         masterController = new MasterController(gameController, controller, model);
         gameController.initMasterController(masterController);
@@ -39,7 +44,7 @@ public class Main extends Application {
         primaryStage.setTitle("Tic-Tac-Toe 3D");
         primaryStage.show();
         controller.invokeMenu(true);
-        masterController.updateTurnLabel();
+        masterController.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
         view.getChildren().add(gameView);
         primaryStage.setOnCloseRequest(event -> {
             //showExitConfirmationWindow();

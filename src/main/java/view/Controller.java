@@ -1,4 +1,4 @@
-package main.java;
+package main.java.view;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -11,6 +11,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.java.controller.SlaveController;
+import main.java.model.Model;
+import main.java.view.MenuController;
 
 import java.io.IOException;
 
@@ -41,15 +44,15 @@ public class Controller extends SlaveController {
     /**
      * Sets turnLabel to the current value from the model
      */
-    void updateTurnLabel() {
-        Platform.runLater(() -> turnLabel.setText(model.player[model.getCurrentPlayer()].getName()));
+    public void updateTurnLabel(String text) {
+        Platform.runLater(() -> turnLabel.setText(text));
     }
 
     /**
      * Sets nickname label to the given value
      * @param nickName value to set
      */
-    void setNickNameLabel(String nickName) {
+    public void setNickNameLabel(String nickName) {
         nickNameLabel.setText(nickName);
     }
 
@@ -80,7 +83,7 @@ public class Controller extends SlaveController {
         dialog.initOwner(primaryStage);
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getResource("../resources/about.fxml"));
+            root = FXMLLoader.load(getClass().getResource("../../resources/about.fxml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,11 +92,11 @@ public class Controller extends SlaveController {
         dialog.show();
     }
 
-    void initModel(Model model) {
+    public void initModel(Model model) {
         this.model = model;
     }
 
-    void initStage(Stage stage) {
+    public void initStage(Stage stage) {
         primaryStage = stage;
     }
 
@@ -101,12 +104,12 @@ public class Controller extends SlaveController {
      * Invokes menu
      * @param isCrucial if true closing menu closes application, otherwise closing menu has no effect
      */
-    void invokeMenu(boolean isCrucial) {
+    public void invokeMenu(boolean isCrucial) {
         Stage menu = new Stage();
         menu.initModality(Modality.APPLICATION_MODAL);
         menu.initOwner(primaryStage);
         Parent menuRoot = null;
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../resources/menu.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../../resources/menu.fxml"));
         try {
             menuRoot = fxmlLoader.load();
             menuController = fxmlLoader.getController();
@@ -123,10 +126,10 @@ public class Controller extends SlaveController {
                 System.exit(0);
         });
         menu.showAndWait();
-        if(model.getTurn() != 5) updateTurnLabel();
+        if(model.getTurn() != Model.Turn.GAMEOVER) updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
     }
 
-    void closeMenu() {
+    public void closeMenu() {
         menuController.closeMenu();
     }
 }

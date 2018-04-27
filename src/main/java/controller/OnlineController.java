@@ -1,6 +1,8 @@
-package main.java;
+package main.java.controller;
 
 import javafx.application.Platform;
+import main.java.model.*;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -84,7 +86,7 @@ class OnlineController extends SlaveController implements NetworkEventListener {
      * Sends current game status
      */
     void sendPlayerStatus() {
-        if (model.getIdentity() == Model.SERVER)
+        if (model.getIdentity() == Model.Identity.SERVER)
             server.send(model);
         else
             client.send(model);
@@ -119,15 +121,16 @@ class OnlineController extends SlaveController implements NetworkEventListener {
 
     /**
      * Handles the incoming game status, board and turn
-     * @param inMessage
+     * @param inMessage incoming game state
      */
     @Override
     public void newMessageArrived(Model inMessage) {
-        model.player = inMessage.player;
+        //model.player = inMessage.player;
+        model.board = inMessage.board;
         masterController.updateBoard(inMessage.getLatestMoveY(), inMessage.getLatestMoveF());
         if (!model.player[model.getCurrentPlayer()].checkWin()) {
             model.changeTurn();
-            masterController.updateTurnLabel();
+            masterController.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
         } else {
             disconnect();
         }
@@ -148,7 +151,7 @@ class OnlineController extends SlaveController implements NetworkEventListener {
      * Closes socket and joins all threads
      */
     void disconnect() {
-        if (model.getIdentity() == Model.CLIENT) {
+        if (model.getIdentity() == Model.Identity.CLIENT) {
             if(client != null) {
                 client.disconnect();
                 try {
@@ -173,5 +176,6 @@ class OnlineController extends SlaveController implements NetworkEventListener {
     @Override
     public void endDisconnected() {
         disconnect();
+        Platform.runLater(() -> masterController.opponentDisconnected());
     }
 }

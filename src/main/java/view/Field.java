@@ -1,4 +1,4 @@
-package main.java;
+package main.java.view;
 
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -10,7 +10,7 @@ import javafx.scene.shape.Sphere;
 /**
  * Basic class that creates the gameView
  */
-class Field extends Group {
+public class Field extends Group {
 
     private final PhongMaterial material;
     private final Color basicColor = new Color(0.1,0.5,1,0.5);
@@ -34,7 +34,7 @@ class Field extends Group {
      * Adds sphere on the field
      * @return status of the operation
      */
-    boolean addSphere() {
+    public boolean addSphere() {
         if (cross != null || sphere != null)
             return false;
         sphere = new Sphere();
@@ -53,7 +53,7 @@ class Field extends Group {
      * Adds cross on the field
      * @return status of the operation
      */
-    boolean addCross() {
+    public boolean addCross() {
         if (cross != null || sphere != null)
             return false;
         cross = new Cross(50);
@@ -82,7 +82,6 @@ class Field extends Group {
     void setHovered() {
         material.setDiffuseColor(hoverColor);
     }
-
 
     /**
      * Sets basic color when unhovered

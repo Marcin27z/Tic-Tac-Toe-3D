@@ -1,29 +1,32 @@
-package main.java;
+package main.java.controller;
+
+import main.java.view.Controller;
+import main.java.model.Model;
 
 import java.net.InetAddress;
 
-class MasterController {
+public class MasterController {
 
     private final GameController gameController;
     private final Controller controller;
     private final OnlineController onlineController;
 
-    MasterController(GameController gameController, Controller controller, Model model) {
+    public MasterController(GameController gameController, Controller controller, Model model) {
         this.gameController = gameController;
         this.controller = controller;
         onlineController = new OnlineController(model);
         onlineController.initMasterController(this);
     }
 
-    void updateTurnLabel() {
-        controller.updateTurnLabel();
+    public void updateTurnLabel(String text) {
+        controller.updateTurnLabel(text);
     }
 
-    void setNickNameLabel(String nickName) {
+    public void setNickNameLabel(String nickName) {
         controller.setNickNameLabel(nickName);
     }
 
-    void resetGameView() {
+    public void resetGameView() {
         gameController.resetView();
     }
 
@@ -31,13 +34,13 @@ class MasterController {
         onlineController.sendPlayerStatus();
     }
 
-    void startServer(int port) {
+    public void startServer(int port) {
         onlineController.startServer(port);
     }
 
-    void joinServer(InetAddress inetAddress, int port) {
+    public void joinServer(InetAddress inetAddress, int port) {
         onlineController.joinServer(inetAddress, port);
-        controller.model.changeTurn();
+        gameController.model.changeTurn();
     }
 
     void closeMenu() {
@@ -52,7 +55,11 @@ class MasterController {
         controller.invokeMenu(false);
     }
 
-    void disconnect() {
+    public void disconnect() {
         onlineController.disconnect();
+    }
+
+    public void opponentDisconnected() {
+        gameController.opponentDisconnected();
     }
 }

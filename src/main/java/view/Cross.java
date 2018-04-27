@@ -1,4 +1,4 @@
-package main.java;
+package main.java.view;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Material;

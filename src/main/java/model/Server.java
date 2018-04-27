@@ -1,4 +1,4 @@
-package main.java;
+package main.java.model;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Hosts the game, listens on the socket for incoming connections and handles that connection
  */
-class Server extends Thread {
+public class Server extends Thread {
 
     private Socket socket;
     //private ClientHandler clientHandler;
@@ -25,7 +25,7 @@ class Server extends Thread {
      * Creates new Server with given ServerSocket for connection accepting
      * @param serverSocket socket on which accept connections
      */
-    Server(ServerSocket serverSocket) {
+    public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
@@ -58,7 +58,7 @@ class Server extends Thread {
      * Adds NetworkEventListener
      * @param toAdd NetworkEventListener to be added
      */
-    void addNetworkEventListener(NetworkEventListener toAdd) {
+    public void addNetworkEventListener(NetworkEventListener toAdd) {
         networkEventListeners.add(toAdd);
     }
 
@@ -66,7 +66,7 @@ class Server extends Thread {
      * Sends given object through ObjectOutputStream
      * @param object object to be sent
      */
-    void send(Object object) {
+    public void send(Object object) {
         try {
             out.writeObject(object);
             out.reset();
@@ -79,7 +79,7 @@ class Server extends Thread {
      * Starts messageWaiter thread and return it
      * @return started messageWaiter thread
      */
-    MessageWaiter startMessageWaiter() {
+    public MessageWaiter startMessageWaiter() {
         messageWaiter.start();
         return messageWaiter;
     }
@@ -88,7 +88,7 @@ class Server extends Thread {
      * Waits for data structure containing clients nickname
      * @return object containing clients nickname
      */
-    Object waitForHandshake() {
+    public Object waitForHandshake() {
         Object inObject = null;
         try {
             inObject = in.readObject();
@@ -102,7 +102,7 @@ class Server extends Thread {
      * Sends data structure that contains current game status with server and client nicknames
      * @param object
      */
-    void responseToHandshake(Object object) {
+    public void responseToHandshake(Object object) {
         try {
             out.writeObject(object);
             out.reset();
@@ -114,22 +114,11 @@ class Server extends Thread {
     /**
      * Closes socket
      */
-    void disconnect() {
+    public void disconnect() {
         try {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-}
-
-interface NetworkEventListener {
-
-    void newMessageArrived(Model model);
-
-    void clientConnected();
-
-    void establishedConnection();
-
-    void endDisconnected();
 }

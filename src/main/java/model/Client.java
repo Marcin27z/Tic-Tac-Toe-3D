@@ -1,9 +1,9 @@
-package main.java;
+package main.java.model;
 
-import javafx.application.Platform;
+import main.java.model.Model;
+import main.java.model.NetworkEventListener;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Handles connection with the server and allows to exchange data structures containing game state
  */
-class Client extends Thread {
+public class Client extends Thread {
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -22,7 +22,7 @@ class Client extends Thread {
      * Creates client thread object with given socket connected to server
      * @param socket socket with server connection
      */
-    Client(Socket socket) {
+    public Client(Socket socket) {
         this.socket = socket;
     }
 
@@ -56,7 +56,7 @@ class Client extends Thread {
      * Starts messageWaiter thread
      * @return messageWaiter thread
      */
-    MessageWaiter startMessageWaiter() {
+    public MessageWaiter startMessageWaiter() {
         messageWaiter.start();
         return messageWaiter;
     }
@@ -65,7 +65,7 @@ class Client extends Thread {
      * Sends to the server initial games status on the client side, so the server can get to know clients nickname
      * @param object data structure with client nickname
      */
-    void initHandshake(Object object) {
+    public void initHandshake(Object object) {
         try {
             out.writeObject(object);
             out.reset();
@@ -78,7 +78,7 @@ class Client extends Thread {
      * Waits for the response from the server, so the client can get to know servers nickname and turn
      * @return data structrue with server nickname and turn
      */
-    Model waitForResponse() {
+    public Model waitForResponse() {
         Model model = null;
         try {
             model = (Model) in.readObject();
@@ -92,7 +92,7 @@ class Client extends Thread {
      * Sends data structure with current game status
      * @param object data structure with current game status
      */
-    void send(Object object) {
+    public void send(Object object) {
         try {
             out.writeObject(object);
             out.reset();
@@ -104,7 +104,7 @@ class Client extends Thread {
     /**
      * Closes socket connection
      */
-    void disconnect() {
+    public void disconnect() {
         try {
             socket.close();
         } catch (IOException e) {

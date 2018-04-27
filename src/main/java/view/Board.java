@@ -1,11 +1,11 @@
-package main.java;
+package main.java.view;
 
 import javafx.scene.Group;
 
 /**
  * Groups of fields on the same level
  */
-class Board extends Group {
+public class Board extends Group {
 
     private final Field[] field;
 
@@ -36,7 +36,7 @@ class Board extends Group {
      * @param i index of the field on the board
      * @return field with given index
      */
-    Field getField(int i) {
+    public Field getField(int i) {
         return field[i];
     }
 }

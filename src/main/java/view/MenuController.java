@@ -1,16 +1,18 @@
-package main.java;
+package main.java.view;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import main.java.controller.SlaveController;
+import main.java.model.Model;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
 
-public class MenuController extends SlaveController{
+public class MenuController extends SlaveController {
 
     private Model model;
     private Stage menuStage;
@@ -37,7 +39,7 @@ public class MenuController extends SlaveController{
         if(!localPlayerOne.getText().equals("") && !localPlayerTwo.getText().equals("")) {
             model.setPlayersNames(localPlayerOne.getText(), localPlayerTwo.getText());
             setLocalErrorLabel("");
-            startGame(Model.LOCAL);
+            startGame(Model.Mode.LOCAL);
             masterController.resetGameView();
             masterController.setNickNameLabel("");
             masterController.disconnect();
@@ -52,8 +54,8 @@ public class MenuController extends SlaveController{
         if (!localOnlineGamePlayer.getText().equals("")) {
             model.player[1].setName(localOnlineGamePlayer.getText());
             setOnlineErrorLabel("");
-            model.setIdentity(Model.CLIENT);
-            startGame(Model.ONLINE);
+            model.setIdentity(Model.Identity.CLIENT);
+            startGame(Model.Mode.ONLINE);
             masterController.setNickNameLabel(localOnlineGamePlayer.getText());
             try {
                 masterController.joinServer(InetAddress.getByName(serverAddress.getText()), Integer.parseInt(serverJoinPort.getText()));
@@ -70,8 +72,8 @@ public class MenuController extends SlaveController{
         if (!localOnlineGamePlayer.getText().equals("")) {
             model.player[0].setName(localOnlineGamePlayer.getText());
             setOnlineErrorLabel("");
-            model.setIdentity(Model.SERVER);
-            startGame(Model.ONLINE);
+            model.setIdentity(Model.Identity.SERVER);
+            startGame(Model.Mode.ONLINE);
             Random random = new Random();
             if(random.nextBoolean())
                 model.changeTurn();
@@ -82,11 +84,11 @@ public class MenuController extends SlaveController{
         }
     }
 
-    void closeMenu() {
+    public void closeMenu() {
         menuStage.close();
     }
 
-    void initModel(Model model) {
+    public void initModel(Model model) {
         this.model = model;
     }
 
@@ -95,11 +97,11 @@ public class MenuController extends SlaveController{
         startLocal();
     }
 
-    void initStage(Stage menuStage) {
+    public void initStage(Stage menuStage) {
         this.menuStage = menuStage;
     }
 
-    private void startGame(boolean mode) {
+    private void startGame(Model.Mode mode) {
         model.setMode(mode);
         model.restart();
     }
