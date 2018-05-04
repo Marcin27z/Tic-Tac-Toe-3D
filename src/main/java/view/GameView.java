@@ -29,7 +29,6 @@ public class GameView extends Group {
     private final double DEF_ROTATE_X = 0, DEF_ROTATE_Y = 0, DEF_CAMERA_Z = 0;
 
     public GameView(BlockingQueue<MyEvent> queue) {
-
         this.queue = queue;
         rotateX = new Rotate(DEF_ROTATE_X, 225, 250, 225 ,Rotate.X_AXIS);
         rotateY = new Rotate(DEF_ROTATE_Y, 225, 250, 255, Rotate.Y_AXIS);
@@ -49,7 +48,6 @@ public class GameView extends Group {
         setTranslateX(20);
         setTranslateY(40);
         root3d = new Group(boards);
-        //root3d = new Group(boards[0].board, boards[1].board, boards[2].board, boards[3].board);
         root3d.getTransforms().addAll (rotateX, rotateY, new Translate(0, 0, 0));
         scene3d = new SubScene(new Group(light, root3d),768,768, true, SceneAntialiasing.BALANCED );
         scene3d.setCamera(camera);
@@ -60,8 +58,6 @@ public class GameView extends Group {
                 new Insets(0.0,0.0,0.0,0.0))));
         pane.setCenter(scene3d);
         getChildren().add(pane);
-
-
         setOnMousePressed(event -> {
             if(event.getButton() == MouseButton.SECONDARY) {
                 mouseOldX = event.getSceneX();
@@ -78,7 +74,6 @@ public class GameView extends Group {
             }
         });
         setOnScroll(event -> zoom(event.getDeltaY()));
-
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 16; j++) {
                 Field finalField = getBoard(i).getField(j);
@@ -105,7 +100,6 @@ public class GameView extends Group {
                 });
             }
         }
-
         Button resetButton = new Button("center");
         resetButton.setTranslateX(700);
         resetButton.setTranslateY(700);

@@ -16,14 +16,6 @@ public class Model implements Serializable {
     }
     private Turn turn = Turn.LOCAL_PLAYER_ONE;
     private Mode mode = Mode.LOCAL;
-    //final static boolean LOCAL = false;
-    //final static boolean ONLINE = true;
-/*    final static boolean SERVER = false;
-    final static boolean CLIENT = true;
-    final private int localPlayerOne = 1;
-    final private int localPlayerTwo = 2;
-    final private int localPlayerTurn = 3;
-    final private int remotePlayerTurn = 4;*/
     private Identity me = Identity.NONE;
     private int latestMoveY, latestMoveF;
     public Player[] player;
@@ -88,8 +80,6 @@ public class Model implements Serializable {
             turn = Turn.LOCAL_PLAYER_TURN;
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 16; j++) {
-                /*player[0].clearField(i, j);
-                player[1].clearField(i, j);*/
                 clearField(i, j);
             }
         }
@@ -109,11 +99,6 @@ public class Model implements Serializable {
     }
 
     public boolean makeMove(int playerNr, int y, int f) {
-        /*if(!player[1 - playerNr].checkField(y, f) && player[playerNr].makeMove(y, f)) {
-            latestMoveY = y;
-            latestMoveF = f;
-            return true;
-        }*/
         if(board[y][f] == 0 && player[playerNr].makeMove(y, f)) {
             latestMoveY = y;
             latestMoveF = f;
@@ -127,7 +112,6 @@ public class Model implements Serializable {
     }
 
     public class Player implements Serializable {
-        //private boolean[][] board;
         private String name;
         private int token;
 
@@ -135,10 +119,6 @@ public class Model implements Serializable {
             this.name = name;
             this.token = token;
             board = new int[4][16];
-        }
-
-        public int checkField(int y, int f) {
-            return board[y][f];
         }
 
         public void setName(String name) {

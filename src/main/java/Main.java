@@ -34,7 +34,6 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../resources/view.fxml"));
         BorderPane root = fxmlLoader.load();
         Controller controller = fxmlLoader.getController();
-        //controller.initModel(model);
         controller.initStage(primaryStage);
         Group view = new Group(root);
 
@@ -43,7 +42,6 @@ public class Main extends Application {
 
         masterController = new MasterController(gameController, model);
         gameController.initMasterController(masterController);
-        //controller.initMasterController(masterController);
         controller.initQueue(eventPassingQueue);
 
         Scene scene = new Scene(view, 988, 888, true);
@@ -51,7 +49,6 @@ public class Main extends Application {
         primaryStage.setTitle("Tic-Tac-Toe 3D");
         primaryStage.show();
         gameController.invokeMenu(true);
-        //masterController.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
         view.getChildren().add(gameView);
         primaryStage.setOnCloseRequest(event -> {
             //showExitConfirmationWindow();

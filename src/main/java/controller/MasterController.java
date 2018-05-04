@@ -1,8 +1,6 @@
 package main.java.controller;
 
-import main.java.view.Controller;
 import main.java.model.Model;
-
 import java.net.InetAddress;
 
 public class MasterController {
@@ -18,10 +16,6 @@ public class MasterController {
 
     public void updateTurnLabel() {
         gameController.updateTurnLabel();
-    }
-
-    public void setNickNameLabel(String nickName) {
-        gameController.setNickNameLabel(nickName);
     }
 
     public void resetGameView() {
@@ -47,10 +41,6 @@ public class MasterController {
 
     void updateBoard(int i, int j) {
         gameController.updateBoard(i , j);
-    }
-
-    void invokeMenu() {
-        gameController.invokeMenu(false);
     }
 
     public void disconnect() {

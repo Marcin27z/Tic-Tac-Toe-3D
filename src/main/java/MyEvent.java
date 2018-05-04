@@ -3,7 +3,7 @@ package main.java;
 public class MyEvent {
 
     public enum MyEventType {
-        INVOKE_MENU, CLOSE_MENU, JOIN_SERVER, HOST, START_LOCAL, CLICKED
+        INVOKE_MENU, JOIN_SERVER, HOST, START_LOCAL, CLICKED
     }
 
     private MyEventType eventType;

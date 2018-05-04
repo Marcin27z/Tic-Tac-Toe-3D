@@ -12,8 +12,6 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.java.MyEvent;
-import main.java.controller.SlaveController;
-import main.java.model.Model;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -23,9 +21,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Controller {
 
-    //Model model;
     private Stage primaryStage;
-    private MenuController menuController;
     private BlockingQueue<MyEvent> queue;
 
     @FXML
@@ -63,7 +59,7 @@ public class Controller {
      */
     @FXML
     void close() {
-        //show confirmation
+
         System.exit(0);
     }
 
@@ -94,9 +90,6 @@ public class Controller {
         dialog.show();
     }
 
-    /*public void initModel(Model model) {
-        this.model = model;
-    }*/
 
     public void initStage(Stage stage) {
         primaryStage = stage;
@@ -110,48 +103,11 @@ public class Controller {
      * Invokes menu
      * @param isCrucial if true closing menu closes application, otherwise closing menu has no effect
      */
-    public void invokeMenu(boolean isCrucial) {
-        /*Stage menu = new Stage();
-        menu.initModality(Modality.APPLICATION_MODAL);
-        menu.initOwner(primaryStage);
-        Parent menuRoot = null;
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../../resources/menu.fxml"));
+    private void invokeMenu(boolean isCrucial) {
         try {
-            menuRoot = fxmlLoader.load();
-            menuController = fxmlLoader.getController();
-            menuController.initModel(model);
-            menuController.initStage(menu);
-            menuController.initMasterController(masterController);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Scene dialogScene = new Scene(menuRoot, 500, 300);
-        menu.setScene(dialogScene);
-        menu.setOnCloseRequest(event -> {
-            if (isCrucial)
-                System.exit(0);
-        });
-        menu.showAndWait();
-        if(model.getTurn() != Model.Turn.GAMEOVER) updateTurnLabel(model.player[model.getCurrentPlayer()].getName());*/
-
-        try {
-            /*if(isCrucial)
-                queue.put(new MyEvent(MyEvent.MyEventType.INVOKE_MENU_CRUCIAL));
-            else
-                queue.put(new MyEvent(MyEvent.MyEventType.INVOKE_MENU));*/
             queue.put(new MyEvent(MyEvent.MyEventType.INVOKE_MENU, isCrucial));
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public void closeMenu() {
-        try {
-            queue.put(new MyEvent(MyEvent.MyEventType.CLOSE_MENU));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        //menuController.closeMenu();
     }
 }

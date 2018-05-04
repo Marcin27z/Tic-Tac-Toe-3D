@@ -125,7 +125,6 @@ class OnlineController extends SlaveController implements NetworkEventListener {
      */
     @Override
     public void newMessageArrived(Model inMessage) {
-        //model.player = inMessage.player;
         model.board = inMessage.board;
         masterController.updateBoard(inMessage.getLatestMoveY(), inMessage.getLatestMoveF());
         if (!model.player[model.getCurrentPlayer()].checkWin()) {
