@@ -11,20 +11,22 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.java.MyEvent;
 import main.java.controller.SlaveController;
 import main.java.model.Model;
-import main.java.view.MenuController;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Controls view around the gameView
  */
-public class Controller extends SlaveController {
+public class Controller {
 
-    Model model;
+    //Model model;
     private Stage primaryStage;
     private MenuController menuController;
+    private BlockingQueue<MyEvent> queue;
 
     @FXML
     MenuBar menuBar;
@@ -92,12 +94,16 @@ public class Controller extends SlaveController {
         dialog.show();
     }
 
-    public void initModel(Model model) {
+    /*public void initModel(Model model) {
         this.model = model;
-    }
+    }*/
 
     public void initStage(Stage stage) {
         primaryStage = stage;
+    }
+
+    public void initQueue(BlockingQueue<MyEvent> queue) {
+        this.queue = queue;
     }
 
     /**
@@ -105,7 +111,7 @@ public class Controller extends SlaveController {
      * @param isCrucial if true closing menu closes application, otherwise closing menu has no effect
      */
     public void invokeMenu(boolean isCrucial) {
-        Stage menu = new Stage();
+        /*Stage menu = new Stage();
         menu.initModality(Modality.APPLICATION_MODAL);
         menu.initOwner(primaryStage);
         Parent menuRoot = null;
@@ -126,10 +132,26 @@ public class Controller extends SlaveController {
                 System.exit(0);
         });
         menu.showAndWait();
-        if(model.getTurn() != Model.Turn.GAMEOVER) updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
+        if(model.getTurn() != Model.Turn.GAMEOVER) updateTurnLabel(model.player[model.getCurrentPlayer()].getName());*/
+
+        try {
+            /*if(isCrucial)
+                queue.put(new MyEvent(MyEvent.MyEventType.INVOKE_MENU_CRUCIAL));
+            else
+                queue.put(new MyEvent(MyEvent.MyEventType.INVOKE_MENU));*/
+            queue.put(new MyEvent(MyEvent.MyEventType.INVOKE_MENU, isCrucial));
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void closeMenu() {
-        menuController.closeMenu();
+        try {
+            queue.put(new MyEvent(MyEvent.MyEventType.CLOSE_MENU));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //menuController.closeMenu();
     }
 }

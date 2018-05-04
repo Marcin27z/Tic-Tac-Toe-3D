@@ -8,6 +8,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.util.Pair;
+import main.java.MyEvent;
+
+import java.util.concurrent.BlockingQueue;
 
 public class GameView extends Group {
 
@@ -17,14 +21,16 @@ public class GameView extends Group {
     private final Group root3d;
     private final SubScene scene3d;
     private final BorderPane pane;
+    private final BlockingQueue<MyEvent> queue;
 
     private final Rotate rotateX;
     private final Rotate rotateY;
     private double mouseOldX, mouseOldY, mousePosX, mousePosY;
-    final private double DEF_ROTATE_X = 0, DEF_ROTATE_Y = 0, DEF_CAMERA_Z = 0;
+    private final double DEF_ROTATE_X = 0, DEF_ROTATE_Y = 0, DEF_CAMERA_Z = 0;
 
-    public GameView() {
+    public GameView(BlockingQueue<MyEvent> queue) {
 
+        this.queue = queue;
         rotateX = new Rotate(DEF_ROTATE_X, 225, 250, 225 ,Rotate.X_AXIS);
         rotateY = new Rotate(DEF_ROTATE_Y, 225, 250, 255, Rotate.Y_AXIS);
         light = new PointLight();
@@ -82,6 +88,19 @@ public class GameView extends Group {
                 });
                 finalField.setOnMouseExited(event -> {
                     finalField.setUnHovered();
+                    event.consume();
+                });
+
+                int finalI = i;
+                int finalJ = j;
+                finalField.setOnMouseClicked(event -> {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        try {
+                            this.queue.put(new MyEvent(MyEvent.MyEventType.CLICKED, new Pair<>(finalI, finalJ)));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     event.consume();
                 });
             }

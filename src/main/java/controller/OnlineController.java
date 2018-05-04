@@ -130,7 +130,7 @@ class OnlineController extends SlaveController implements NetworkEventListener {
         masterController.updateBoard(inMessage.getLatestMoveY(), inMessage.getLatestMoveF());
         if (!model.player[model.getCurrentPlayer()].checkWin()) {
             model.changeTurn();
-            masterController.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
+            masterController.updateTurnLabel();
         } else {
             disconnect();
         }
@@ -176,6 +176,7 @@ class OnlineController extends SlaveController implements NetworkEventListener {
     @Override
     public void endDisconnected() {
         disconnect();
-        Platform.runLater(() -> masterController.opponentDisconnected());
+        if(model.getTurn() != Model.Turn.GAME_OVER)
+            Platform.runLater(() -> masterController.opponentDisconnected());
     }
 }

@@ -8,22 +8,20 @@ import java.net.InetAddress;
 public class MasterController {
 
     private final GameController gameController;
-    private final Controller controller;
     private final OnlineController onlineController;
 
-    public MasterController(GameController gameController, Controller controller, Model model) {
+    public MasterController(GameController gameController, Model model) {
         this.gameController = gameController;
-        this.controller = controller;
         onlineController = new OnlineController(model);
         onlineController.initMasterController(this);
     }
 
-    public void updateTurnLabel(String text) {
-        controller.updateTurnLabel(text);
+    public void updateTurnLabel() {
+        gameController.updateTurnLabel();
     }
 
     public void setNickNameLabel(String nickName) {
-        controller.setNickNameLabel(nickName);
+        gameController.setNickNameLabel(nickName);
     }
 
     public void resetGameView() {
@@ -44,7 +42,7 @@ public class MasterController {
     }
 
     void closeMenu() {
-        controller.closeMenu();
+        gameController.closeMenu();
     }
 
     void updateBoard(int i, int j) {
@@ -52,7 +50,7 @@ public class MasterController {
     }
 
     void invokeMenu() {
-        controller.invokeMenu(false);
+        gameController.invokeMenu(false);
     }
 
     public void disconnect() {

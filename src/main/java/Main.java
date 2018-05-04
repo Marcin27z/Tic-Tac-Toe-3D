@@ -15,36 +15,43 @@ import main.java.model.Model;
 import main.java.view.Controller;
 import main.java.view.GameView;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 public class Main extends Application {
 
     private Model model;
     private MasterController masterController;
+    private BlockingQueue<MyEvent> eventPassingQueue;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        GameView gameView = new GameView();
+        eventPassingQueue = new ArrayBlockingQueue<>(10);
+        GameView gameView = new GameView(eventPassingQueue);
         model = new Model();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../resources/view.fxml"));
         BorderPane root = fxmlLoader.load();
         Controller controller = fxmlLoader.getController();
-        controller.initModel(model);
+        //controller.initModel(model);
         controller.initStage(primaryStage);
         Group view = new Group(root);
 
-        GameController gameController = new GameController(gameView, model, primaryStage);
+        GameController gameController = new GameController(gameView, model, primaryStage, controller, eventPassingQueue);
+        gameController.start();
 
-        masterController = new MasterController(gameController, controller, model);
+        masterController = new MasterController(gameController, model);
         gameController.initMasterController(masterController);
-        controller.initMasterController(masterController);
+        //controller.initMasterController(masterController);
+        controller.initQueue(eventPassingQueue);
 
         Scene scene = new Scene(view, 988, 888, true);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Tic-Tac-Toe 3D");
         primaryStage.show();
-        controller.invokeMenu(true);
-        masterController.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
+        gameController.invokeMenu(true);
+        //masterController.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
         view.getChildren().add(gameView);
         primaryStage.setOnCloseRequest(event -> {
             //showExitConfirmationWindow();

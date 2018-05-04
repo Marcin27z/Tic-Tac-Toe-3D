@@ -9,12 +9,12 @@ public class Model implements Serializable {
         LOCAL, ONLINE
     }
     public enum Turn {
-        LOCALPLAYERONE, LOCALPLAYERTWO, LOCALPLAYERTURN, REMOTEPLAYERTURN, GAMEOVER
+        LOCAL_PLAYER_ONE, LOCAL_PLAYER_TWO, LOCAL_PLAYER_TURN, REMOTE_PLAYER_TURN, GAME_OVER
     }
     public enum Identity {
         SERVER, CLIENT, NONE
     }
-    private Turn turn = Turn.LOCALPLAYERONE;
+    private Turn turn = Turn.LOCAL_PLAYER_ONE;
     private Mode mode = Mode.LOCAL;
     //final static boolean LOCAL = false;
     //final static boolean ONLINE = true;
@@ -36,14 +36,14 @@ public class Model implements Serializable {
     }
 
     public void changeTurn() {
-        if (mode == Mode.ONLINE && turn == Turn.REMOTEPLAYERTURN)
-            turn = Turn.LOCALPLAYERTURN;
-        else if (mode == Mode.ONLINE && turn == Turn.LOCALPLAYERTURN)
-            turn = Turn.REMOTEPLAYERTURN;
-        else if (mode == Mode.LOCAL && turn == Turn.LOCALPLAYERONE)
-            turn = Turn.LOCALPLAYERTWO;
-        else if (mode == Mode.LOCAL && turn == Turn.LOCALPLAYERTWO)
-            turn = Turn.LOCALPLAYERONE;
+        if (mode == Mode.ONLINE && turn == Turn.REMOTE_PLAYER_TURN)
+            turn = Turn.LOCAL_PLAYER_TURN;
+        else if (mode == Mode.ONLINE && turn == Turn.LOCAL_PLAYER_TURN)
+            turn = Turn.REMOTE_PLAYER_TURN;
+        else if (mode == Mode.LOCAL && turn == Turn.LOCAL_PLAYER_ONE)
+            turn = Turn.LOCAL_PLAYER_TWO;
+        else if (mode == Mode.LOCAL && turn == Turn.LOCAL_PLAYER_TWO)
+            turn = Turn.LOCAL_PLAYER_ONE;
     }
 
     public void setIdentity(Identity identity) {
@@ -63,7 +63,7 @@ public class Model implements Serializable {
     }
 
     public void setEndGame() {
-        turn = Turn.GAMEOVER;
+        turn = Turn.GAME_OVER;
     }
 
     public void setTurn(Turn turn) {
@@ -75,7 +75,7 @@ public class Model implements Serializable {
     }
 
     public int getCurrentPlayer() {
-        if (turn == Turn.REMOTEPLAYERTURN || turn == Turn.LOCALPLAYERTWO)
+        if (turn == Turn.REMOTE_PLAYER_TURN || turn == Turn.LOCAL_PLAYER_TWO)
             return 1;
         else
             return 0;
@@ -83,9 +83,9 @@ public class Model implements Serializable {
 
     public void restart() {
         if(mode == Mode.LOCAL)
-            turn = Turn.LOCALPLAYERONE;
+            turn = Turn.LOCAL_PLAYER_ONE;
         else
-            turn = Turn.LOCALPLAYERTURN;
+            turn = Turn.LOCAL_PLAYER_TURN;
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 16; j++) {
                 /*player[0].clearField(i, j);
