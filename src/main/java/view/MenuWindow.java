@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import main.java.MyEvent;
 import java.util.concurrent.BlockingQueue;
 
-public class MenuController {
+public class MenuWindow {
 
     private Stage menuStage;
     private BlockingQueue<MyEvent> queue;

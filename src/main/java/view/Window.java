@@ -19,7 +19,7 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Controls view around the gameView
  */
-public class Controller {
+public class Window {
 
     private Stage primaryStage;
     private BlockingQueue<MyEvent> queue;

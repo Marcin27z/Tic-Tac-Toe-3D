@@ -12,7 +12,7 @@ import javafx.stage.StageStyle;
 import main.java.controller.GameController;
 import main.java.controller.MasterController;
 import main.java.model.Model;
-import main.java.view.Controller;
+import main.java.view.Window;
 import main.java.view.GameView;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -33,16 +33,16 @@ public class Main extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../resources/view.fxml"));
         BorderPane root = fxmlLoader.load();
-        Controller controller = fxmlLoader.getController();
-        controller.initStage(primaryStage);
+        Window window = fxmlLoader.getController();
+        window.initStage(primaryStage);
         Group view = new Group(root);
 
-        GameController gameController = new GameController(gameView, model, primaryStage, controller, eventPassingQueue);
+        GameController gameController = new GameController(gameView, model, primaryStage, window, eventPassingQueue);
         gameController.start();
 
         masterController = new MasterController(gameController, model);
         gameController.initMasterController(masterController);
-        controller.initQueue(eventPassingQueue);
+        window.initQueue(eventPassingQueue);
 
         Scene scene = new Scene(view, 988, 888, true);
         primaryStage.setScene(scene);

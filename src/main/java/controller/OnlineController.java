@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
- * Controller that handles interactions between server or client threads and other controllers or model
+ * Window that handles interactions between server or client threads and other controllers or model
  */
 class OnlineController extends SlaveController implements NetworkEventListener {
 
