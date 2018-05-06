@@ -12,10 +12,10 @@ import javafx.stage.StageStyle;
 import javafx.util.Pair;
 import main.java.MyEvent;
 import main.java.model.Model;
-import main.java.view.Controller;
+import main.java.view.Window;
 import main.java.view.Field;
 import main.java.view.GameView;
-import main.java.view.MenuController;
+import main.java.view.MenuWindow;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -25,44 +25,50 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
-/**
- * Controls game state
- */
-
 interface CustomAction {
     void perform(Object args);
 }
 
+/**
+ * Controls game state
+ */
 public class GameController extends Thread {
 
     private final GameView view;
-    private final Controller controller;
+    private final Window window;
     public final Model model;
     private Stage primaryStage;
     private Map<MyEvent, CustomAction> map;
-    private MenuController menuController;
+    private MenuWindow menuWindow;
     private BlockingQueue<MyEvent> queue;
     private MasterController masterController;
+    private boolean running = true;
 
     public void initMasterController(MasterController masterController) {
         this.masterController = masterController;
     }
 
     /**
-     * Creates controller of the gameView and model
+     * Creates window of the gameView and model
      * @param gameView view to control
      * @param model model to control
      * @param primaryStage main stage
      */
-    public GameController(GameView gameView, Model model, Stage primaryStage, Controller controller, BlockingQueue<MyEvent> queue) {
+    public GameController(GameView gameView, Model model, Stage primaryStage, Window window, BlockingQueue<MyEvent> queue) {
         map = new HashMap<>();
-        this.controller = controller;
+        this.window = window;
         this.model = model;
         this.view = gameView;
         this.primaryStage = primaryStage;
         this.queue = queue;
     }
 
+
+    /**
+     * Action performed when filed is clicked
+     * @param i y coordinate of the clicked field
+     * @param j index of field clicked
+     */
     private void clicked(int i, int j) {
         if (((model.getTurn() != Model.Turn.REMOTE_PLAYER_TURN && model.getIdentity() != Model.Identity.CLIENT)
                 || (model.getTurn() != Model.Turn.LOCAL_PLAYER_TURN && model.getIdentity() != Model.Identity.SERVER)) && model.getTurn() != Model.Turn.GAME_OVER) {
@@ -73,7 +79,7 @@ public class GameController extends Thread {
                     masterController.sendPlayerStatus();
                 if (!localCheckWin()) {
                     model.changeTurn();
-                    controller.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
+                    window.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
                 }
             }
         }
@@ -87,6 +93,7 @@ public class GameController extends Thread {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
             String winner = model.player[model.getCurrentPlayer()].getName();
             model.setEndGame();
+            window.updateTurnLabel("Game Over");
             if(model.getMode() == Model.Mode.ONLINE)
                 masterController.disconnect();
             showWinAlert(winner);
@@ -101,7 +108,10 @@ public class GameController extends Thread {
     private void checkWin() {
         if (model.player[model.getCurrentPlayer()].checkWin()) {
             String winner = model.player[model.getCurrentPlayer()].getName();
-            Platform.runLater(() -> showWinAlert(winner));
+            Platform.runLater(() -> {
+                window.updateTurnLabel("Game Over");
+                showWinAlert(winner);
+            });
         }
     }
 
@@ -150,7 +160,7 @@ public class GameController extends Thread {
      */
     void opponentDisconnected() {
         model.setEndGame();
-        controller.updateTurnLabel("Game Over");
+        window.updateTurnLabel("Game Over");
         showDisconnectAlert();
     }
 
@@ -172,6 +182,7 @@ public class GameController extends Thread {
 
     /**
      * Invokes menu
+     * Performed on INVOKE_MENU event
      * @param isCrucial if true closing menu closes application, otherwise closing menu has no effect
      */
     public void invokeMenu(boolean isCrucial) {
@@ -182,9 +193,9 @@ public class GameController extends Thread {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../../resources/menu.fxml"));
         try {
             menuRoot = fxmlLoader.load();
-            menuController = fxmlLoader.getController();
-            menuController.initStage(menu);
-            menuController.initQueue(queue);
+            menuWindow = fxmlLoader.getController();
+            menuWindow.initStage(menu);
+            menuWindow.initQueue(queue);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,38 +208,52 @@ public class GameController extends Thread {
         menu.showAndWait();
     }
 
+    /**
+     * Closes menu
+     * Performed on CLOSE event
+     */
     public void closeMenu() {
         updateTurnLabel();
-        menuController.closeMenu();
+        menuWindow.closeMenu();
     }
 
+    /**
+     * Starts new game
+     * Performed on START_LOCAL event
+     */
     private void startLocal() {
-        model.setPlayersNames(menuController.getLocalPlayerOne(), menuController.getLocalPlayerTwo());
+        model.setPlayersNames(menuWindow.getLocalPlayerOne(), menuWindow.getLocalPlayerTwo());
         startGame(Model.Mode.LOCAL);
         resetView();
-        controller.setNickNameLabel("");
+        window.setNickNameLabel("");
         masterController.disconnect();
         updateTurnLabel();
     }
 
+    /**
+     * Performed on HOST event
+     */
     private void host() {
-        model.player[0].setName(menuController.getLocalOnlineGamePlayer());
+        model.player[0].setName(menuWindow.getLocalOnlineGamePlayer());
         model.setIdentity(Model.Identity.SERVER);
         startGame(Model.Mode.ONLINE);
         Random random = new Random();
         if(random.nextBoolean())
             model.changeTurn();
-        controller.setNickNameLabel(menuController.getLocalOnlineGamePlayer());
-        masterController.startServer(Integer.parseInt(menuController.getServerHostPort()));
+        window.setNickNameLabel(menuWindow.getLocalOnlineGamePlayer());
+        masterController.startServer(Integer.parseInt(menuWindow.getServerHostPort()));
     }
 
+    /**
+     * Performed on JOIN_SERVER event
+     */
     private void joinServer() {
-        model.player[1].setName(menuController.getLocalOnlineGamePlayer());
+        model.player[1].setName(menuWindow.getLocalOnlineGamePlayer());
         model.setIdentity(Model.Identity.CLIENT);
         startGame(Model.Mode.ONLINE);
-        controller.setNickNameLabel(menuController.getLocalOnlineGamePlayer());
+        window.setNickNameLabel(menuWindow.getLocalOnlineGamePlayer());
         try {
-            masterController.joinServer(InetAddress.getByName(menuController.getServerAddress()), Integer.parseInt(menuController.getServerJoinPort()));
+            masterController.joinServer(InetAddress.getByName(menuWindow.getServerAddress()), Integer.parseInt(menuWindow.getServerJoinPort()));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -239,9 +264,17 @@ public class GameController extends Thread {
         model.restart();
     }
 
-    public void updateTurnLabel() {
-        controller.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
+    /**
+     * Performed on STOP event
+     */
+    private void stopController() {
+        running = false;
     }
+
+    public void updateTurnLabel() {
+        window.updateTurnLabel(model.player[model.getCurrentPlayer()].getName());
+    }
+
 
     @Override
     public void run() {
@@ -250,8 +283,9 @@ public class GameController extends Thread {
         map.put(new MyEvent(MyEvent.MyEventType.JOIN_SERVER), (args) -> joinServer());
         map.put(new MyEvent(MyEvent.MyEventType.START_LOCAL), (args) -> startLocal());
         map.put(new MyEvent(MyEvent.MyEventType.CLICKED), (args) -> clicked(((Pair<Integer, Integer>)args).getKey(), ((Pair<Integer, Integer>)args).getValue()));
+        map.put(new MyEvent(MyEvent.MyEventType.STOP), (args) -> stopController());
         MyEvent event = null;
-        while (true) {
+        while (running) {
             try {
                 event = queue.take();
             } catch (InterruptedException e) {
