@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import main.java.model.*;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -36,15 +37,17 @@ class OnlineController extends SlaveController implements NetworkEventListener {
      * @param port port for the socket to bind
      */
     void joinServer(InetAddress address, int port) {
-        Socket socket = null;
+        Socket socket;
         try {
             socket = new Socket(address, port);
+            client = new Client(socket);
+            client.start();
+            client.addNetworkEventListener(this);
+        } catch (ConnectException e) {
+            masterController.hostUnreachable();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        client = new Client(socket);
-        client.start();
-        client.addNetworkEventListener(this);
     }
 
     /**

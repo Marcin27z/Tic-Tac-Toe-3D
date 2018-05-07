@@ -50,4 +50,8 @@ public class MasterController {
     public void opponentDisconnected() {
         gameController.opponentDisconnected();
     }
+
+    public void hostUnreachable() {
+        gameController.hostUnreachable();
+    }
 }

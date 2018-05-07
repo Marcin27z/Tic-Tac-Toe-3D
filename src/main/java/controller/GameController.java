@@ -161,19 +161,23 @@ public class GameController extends Thread {
     void opponentDisconnected() {
         model.setEndGame();
         window.updateTurnLabel("Game Over");
-        showDisconnectAlert();
+        showAlert("Opponent has disconnected");
     }
 
     /**
-     * Shows alert with text that opponent has disconnected
+     * Shows alert with given text
      */
-    private void showDisconnectAlert() {
+    private void showAlert(String text) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         alert.setTitle("");
-        alert.setContentText("Opponent has disconnected");
+        alert.setContentText(text);
         alert.initStyle(StageStyle.UTILITY);
         alert.showAndWait();
+    }
+
+    public void hostUnreachable() {
+        showAlert("Host unreachable");
     }
 
     void resetView() {
@@ -284,17 +288,13 @@ public class GameController extends Thread {
         map.put(new MyEvent(MyEvent.MyEventType.START_LOCAL), (args) -> startLocal());
         map.put(new MyEvent(MyEvent.MyEventType.CLICKED), (args) -> clicked(((Pair<Integer, Integer>)args).getKey(), ((Pair<Integer, Integer>)args).getValue()));
         map.put(new MyEvent(MyEvent.MyEventType.STOP), (args) -> stopController());
-        MyEvent event = null;
+        MyEvent event;
         while (running) {
             try {
                 event = queue.take();
+                MyEvent finalEvent1 = event;
+                Platform.runLater(() -> map.get(finalEvent1).perform(finalEvent1.getArgs()));
             } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            try {
-                MyEvent finalEvent = event;
-                Platform.runLater(() -> map.get(finalEvent).perform(finalEvent.getArgs()));
-            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         }
